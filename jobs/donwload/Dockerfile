@@ -1,0 +1,18 @@
+FROM node:18-bullseye-slim as base
+
+WORKDIR /app
+RUN apt-get update && apt-get install -y aria2
+
+FROM base as installer
+
+COPY package.json ./
+COPY yarn.lock ./
+
+RUN yarn install
+
+FROM base as job
+
+COPY . /app
+COPY --from=installer /app/node_modules ./node_modules
+
+CMD ["yarn", "tsx", "index.ts"]
