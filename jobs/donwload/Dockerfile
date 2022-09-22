@@ -1,7 +1,8 @@
 FROM node:18-bullseye-slim as base
 
 WORKDIR /app
-RUN apt-get update && apt-get install -y aria2 tini
+RUN apt-get update && apt-get install -y aria2 tini python python3-pip
+RUN pip install awscli
 
 FROM base as installer
 
