@@ -87,8 +87,3 @@ enum TaskStatus {
   Completed
   Failed
 }
-
-enum TaskType {
-  Download
-  Compress
-}

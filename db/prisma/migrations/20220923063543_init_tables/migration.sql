@@ -1,9 +1,6 @@
 -- CreateEnum
 CREATE TYPE "TaskStatus" AS ENUM ('Waiting', 'Running', 'Completed', 'Failed');
 
--- CreateEnum
-CREATE TYPE "TaskType" AS ENUM ('Download', 'Compress');
-
 -- CreateTable
 CREATE TABLE "Product" (
     "id" TEXT NOT NULL,
