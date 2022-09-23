@@ -4,7 +4,7 @@ import { $ } from "zx";
 const app = fastify({ logger: true });
 
 app.get("/", async (request, reply) => {
-  await $`ls -l`;
+  await $`gcloud -h`;
   reply.code(200).send({
     hello: "world",
     httpVersion: request.raw.httpVersion,
