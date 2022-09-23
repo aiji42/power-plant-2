@@ -8,12 +8,14 @@ steps:
     args:
       - run
       - services
-      - create
+      - update
       - $_SERVICE_NAME
       - '--platform=managed'
       - '--image=gcr.io/$PROJECT_ID/power-plant-2/webhook:$COMMIT_SHA'
       - '--region=$_DEPLOY_REGION'
+      - '--service-account=$_SERVICE_ACCOUNT'
       - '--quiet'
 substitutions:
   _DEPLOY_REGION: asia-northeast1
   _SERVICE_NAME: webhook
+  _SERVICE_ACCOUNT: your-service-account
