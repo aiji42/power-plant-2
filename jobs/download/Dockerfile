@@ -6,17 +6,16 @@ RUN pip install awscli
 
 FROM base as installer
 
-COPY ./jobs/download/package.json ./jobs/download/
-COPY ./jobs/download/yarn.lock ./jobs/download/
-COPY ./db/prisma/schema.prisma ./db/prisma/schema.prisma
+COPY ./package.json ./
+COPY ./yarn.lock ./
+COPY ./schema.prisma ./
 
-WORKDIR /app/jobs/download
 RUN yarn install
 
 FROM base as job
 
-COPY --from=installer /app/jobs/download/node_modules ./node_modules
-COPY ./jobs/download /app
+COPY --from=installer /app/node_modules ./node_modules
+COPY . ./
 
 ARG AWS_ACCESS_KEY_ID
 ARG AWS_SECRET_ACCESS_KEY

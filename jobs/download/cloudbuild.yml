@@ -1,7 +1,6 @@
 steps:
   - name: 'gcr.io/kaniko-project/executor:latest'
     args:
-      - --dockerfile=./jobs/download/Dockerfile
       - --destination=gcr.io/$PROJECT_ID/power-plant-2/download-job:latest
       - --build-arg=AWS_ACCESS_KEY_ID=${_AWS_ACCESS_KEY_ID}
       - --build-arg=AWS_SECRET_ACCESS_KEY=${_AWS_SECRET_ACCESS_KEY}
@@ -10,6 +9,7 @@ steps:
       - --build-arg=DATABASE_URL=${_DATABASE_URL}
       - --build-arg=R2_PUBLIC_URL=${_R2_PUBLIC_URL}
       - --cache=true
+    dir: jobs/download
 substitutions:
   _AWS_ACCESS_KEY_ID: input
   _AWS_SECRET_ACCESS_KEY: input

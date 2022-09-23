@@ -17,7 +17,7 @@
   },
   "scripts": {
     "db:schema:cp": "cp ../../db/prisma/schema.prisma ./schema.prisma",
-    "postinstall": "yarn db:schema:cp && yarn prisma generate",
+    "postinstall": "yarn prisma generate",
     "start": "tsx index.ts"
   },
   "prisma": {
