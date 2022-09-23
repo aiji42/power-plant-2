@@ -45,7 +45,7 @@ CREATE TABLE "Cast" (
 );
 
 -- CreateTable
-CREATE TABLE "Task" (
+CREATE TABLE "DownloadTask" (
     "id" TEXT NOT NULL,
     "productId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -53,11 +53,24 @@ CREATE TABLE "Task" (
     "startedAt" TIMESTAMP(3),
     "stoppedAt" TIMESTAMP(3),
     "status" "TaskStatus" NOT NULL DEFAULT 'Waiting',
-    "type" "TaskType" NOT NULL,
     "message" TEXT,
-    "data" JSONB,
+    "targetUrl" TEXT NOT NULL,
 
-    CONSTRAINT "Task_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "DownloadTask_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "CompressTask" (
+    "id" TEXT NOT NULL,
+    "mediaId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "startedAt" TIMESTAMP(3),
+    "stoppedAt" TIMESTAMP(3),
+    "status" "TaskStatus" NOT NULL DEFAULT 'Waiting',
+    "message" TEXT,
+
+    CONSTRAINT "CompressTask_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -70,7 +83,25 @@ CREATE TABLE "_CastToProduct" (
 CREATE UNIQUE INDEX "Product_code_key" ON "Product"("code");
 
 -- CreateIndex
+CREATE INDEX "Product_createdAt_idx" ON "Product"("createdAt" DESC);
+
+-- CreateIndex
+CREATE INDEX "Product_title_idx" ON "Product"("title");
+
+-- CreateIndex
+CREATE INDEX "Product_maker_idx" ON "Product"("maker");
+
+-- CreateIndex
+CREATE INDEX "Product_series_idx" ON "Product"("series");
+
+-- CreateIndex
+CREATE INDEX "Media_size_idx" ON "Media"("size");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Cast_name_key" ON "Cast"("name");
+
+-- CreateIndex
+CREATE INDEX "Cast_name_idx" ON "Cast"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_CastToProduct_AB_unique" ON "_CastToProduct"("A", "B");
@@ -79,10 +110,13 @@ CREATE UNIQUE INDEX "_CastToProduct_AB_unique" ON "_CastToProduct"("A", "B");
 CREATE INDEX "_CastToProduct_B_index" ON "_CastToProduct"("B");
 
 -- AddForeignKey
-ALTER TABLE "Media" ADD CONSTRAINT "Media_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Media" ADD CONSTRAINT "Media_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Task" ADD CONSTRAINT "Task_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "DownloadTask" ADD CONSTRAINT "DownloadTask_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CompressTask" ADD CONSTRAINT "CompressTask_mediaId_fkey" FOREIGN KEY ("mediaId") REFERENCES "Media"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_CastToProduct" ADD CONSTRAINT "_CastToProduct_A_fkey" FOREIGN KEY ("A") REFERENCES "Cast"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -11,31 +11,39 @@ datasource db {
 }
 
 model Product {
-  id         String   @id @default(uuid())
-  code       String   @unique
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt
-  title      String
-  maker      String
-  series     String
-  genres     String[]
-  url        String
-  releasedAt DateTime
-  imageUrls  String[]
-  casts      Cast[]
-  tasks      Task[]
-  Media      Media[]
+  id            String         @id @default(uuid())
+  code          String         @unique
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now()) @updatedAt
+  title         String
+  maker         String
+  series        String
+  genres        String[]
+  url           String
+  releasedAt    DateTime
+  imageUrls     String[]
+  casts         Cast[]
+  downloadTasks DownloadTask[]
+  medias        Media[]
+
+  @@index([createdAt(sort: Desc)])
+  @@index([title])
+  @@index([maker])
+  @@index([series])
 }
 
 model Media {
-  id        String   @id @default(uuid())
-  productId String
-  product   Product  @relation(fields: [productId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  url       String
-  size      Int
-  meta      Json
+  id            String         @id @default(uuid())
+  productId     String
+  product       Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now()) @updatedAt
+  url           String
+  size          Int
+  meta          Json
+  compressTasks CompressTask[]
+
+  @@index([size])
 }
 
 model Cast {
@@ -44,20 +52,33 @@ model Cast {
   updatedAt DateTime  @default(now()) @updatedAt
   name      String    @unique
   products  Product[]
+
+  @@index([name])
 }
 
-model Task {
+model DownloadTask {
   id        String     @id @default(uuid())
   productId String
-  product   Product    @relation(fields: [productId], references: [id])
+  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @default(now()) @updatedAt
   startedAt DateTime?
   stoppedAt DateTime?
   status    TaskStatus @default(Waiting)
-  type      TaskType
   message   String?
-  data      Json?
+  targetUrl String
+}
+
+model CompressTask {
+  id        String     @id @default(uuid())
+  mediaId   String
+  media     Media      @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now()) @updatedAt
+  startedAt DateTime?
+  stoppedAt DateTime?
+  status    TaskStatus @default(Waiting)
+  message   String?
 }
 
 enum TaskStatus {
