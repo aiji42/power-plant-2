@@ -1,0 +1,36 @@
+{
+  "taskGroups": [
+    {
+      "taskCount": "1",
+      "parallelism": "1",
+      "taskSpec": {
+        "computeResource": {
+          "cpuMilli": "1000",
+          "memoryMib": "512"
+        },
+        "maxRetryCount": 0,
+        "maxRunDuration": "3600s",
+        "runnables": [
+          {
+            "container": {
+              "imageUri": "gcr.io/power-plant-2/power-plant-2/download-job:latest",
+              "entrypoint": ""
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "allocationPolicy": {
+    "instances": [
+      {
+        "policy": {
+          "provisioningModel": "SPOT"
+        }
+      }
+    ]
+  },
+  "logsPolicy": {
+    "destination": "CLOUD_LOGGING"
+  }
+}
