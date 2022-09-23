@@ -1,35 +1,12 @@
 import { $, fs, path } from "zx";
 import ffprobe from "ffprobe";
-import { PrismaClient, TaskStatus, TaskType, Task } from "@prisma/client";
+import { PrismaClient, TaskStatus, DownloadTask } from "@prisma/client";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({ log: ["info", "warn", "error"] });
 
 const MIN_SIZE = 400 * 1024 * 1024; // 400M
-const DOWNLOAD_TIMEOUT = 30 * 60 * 1000;
+const DOWNLOAD_TIMEOUT = 30 * 60 * 1000; // 30min
 const DOWNLOAD_DIR = "/downloads";
-
-void (async function () {
-  const queue = await getQueueAndStart();
-  if (!queue) return;
-
-  try {
-    const target = queue.data.targetUrl;
-
-    const fileNames = await Promise.race([
-      download(target, DOWNLOAD_DIR, MIN_SIZE),
-      timeout(DOWNLOAD_TIMEOUT),
-    ]);
-
-    for (let [index, file] of Object.entries(fileNames)) {
-      const url = await uploadToStorage(file, `${index}${path.extname(file)}`);
-      await saveDbAsMedia(file, url, queue);
-    }
-    await complete(queue.id);
-  } catch (e) {
-    console.error(e);
-    await failed(queue.id, e);
-  }
-})();
 
 const listFiles = (dir: string): string[] =>
   fs.readdirSync(dir, { withFileTypes: true }).flatMap((dirent) => {
@@ -58,33 +35,34 @@ const scanMetaInfo = async (path: string) => {
   };
 };
 
-type QueueData = {
-  targetUrl: string;
-};
-
-const getQueueAndStart = async (): Promise<
-  null | (Task & { data: QueueData })
-> => {
-  const queue = await prisma.task.findFirst({
-    where: { status: TaskStatus.Waiting, type: TaskType.Download },
+const getTaskAndStart = async () => {
+  const task = await prisma.downloadTask.findFirst({
+    where: { status: TaskStatus.Waiting },
   });
-  if (!queue) return null;
+  if (!task) return null;
 
-  return (await prisma.task.update({
-    where: { id: queue.id },
-    data: { status: TaskStatus.Running, startedAt: new Date() },
-  })) as Task & { data: QueueData };
+  return await prisma.downloadTask.update({
+    where: { id: task.id },
+    data: {
+      status: TaskStatus.Running,
+      startedAt: new Date(),
+      stoppedAt: null,
+    },
+    include: {
+      product: true,
+    },
+  });
 };
 
 const complete = (id: string) => {
-  return prisma.task.update({
+  return prisma.downloadTask.update({
     where: { id },
     data: { status: TaskStatus.Completed, stoppedAt: new Date() },
   });
 };
 
 const failed = (id: string, e: Error) => {
-  return prisma.task.update({
+  return prisma.downloadTask.update({
     where: { id },
     data: {
       status: TaskStatus.Failed,
@@ -113,11 +91,15 @@ const download = async (
 };
 
 const uploadToStorage = async (file: string, key: string): Promise<string> => {
-  await $`aws s3 mv --endpoint-url https://${process.env.R2_CLIENT_ID}.r2.cloudflarestorage.com ${file} s3://power-plant-2/${key}`;
+  await $`aws s3 cp --endpoint-url https://${process.env.R2_CLIENT_ID}.r2.cloudflarestorage.com ${file} s3://power-plant-2/${key}`;
   return `${process.env.R2_PUBLIC_URL}/${key}`;
 };
 
-const saveDbAsMedia = async (filePath: string, url: string, job: Task) => {
+const saveDbAsMedia = async (
+  filePath: string,
+  url: string,
+  job: DownloadTask
+) => {
   const { size, ...meta } = await scanMetaInfo(filePath);
 
   await prisma.media.create({
@@ -131,3 +113,45 @@ const saveDbAsMedia = async (filePath: string, url: string, job: Task) => {
     },
   });
 };
+
+const createRandomString = (length: number) => {
+  const S = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let rnd = "";
+  for (let i = 0; i < length; i++) {
+    rnd += S.charAt(Math.floor(Math.random() * S.length));
+  }
+  return rnd;
+};
+
+const main = async () => {
+  const task = await getTaskAndStart();
+  if (!task) return;
+
+  try {
+    const fileNames = await Promise.race([
+      download(task.targetUrl, DOWNLOAD_DIR, MIN_SIZE),
+      timeout(DOWNLOAD_TIMEOUT),
+    ]);
+
+    for (let [index, file] of Object.entries(fileNames)) {
+      const url = await uploadToStorage(
+        file,
+        `${task.product.code}/${createRandomString(16)}${path.extname(file)}`
+      );
+      await saveDbAsMedia(file, url, task);
+    }
+    await complete(task.id);
+  } catch (e) {
+    await failed(task.id, e);
+    throw e;
+  }
+};
+
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .then(() => {
+    process.exit(0);
+  });
