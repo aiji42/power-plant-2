@@ -3,7 +3,7 @@ steps:
     args:
       - --destination=gcr.io/$PROJECT_ID/power-plant-2/webhook:${COMMIT_SHA}
       - --cache=true
-    dir: webhook
+      - --context=dir:///workspace/webhook
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: gcloud
     args:
