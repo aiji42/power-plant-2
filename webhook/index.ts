@@ -17,7 +17,7 @@ app.post("/", async (request, reply) => {
     await $`gcloud beta batch jobs submit download-job-${createRandomString(
       16
     )} --location asia-southeast1 --config ./configs/download-job.json`;
-  reply.code(200).send(log);
+  reply.code(200).send({ message: log.message, stdout: log.stdout });
 });
 
 app.listen(process.env.PORT || 3000, "0.0.0.0");
