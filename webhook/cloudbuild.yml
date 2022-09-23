@@ -1,0 +1,19 @@
+steps:
+  - name: 'gcr.io/kaniko-project/executor:latest'
+    args:
+      - --destination=gcr.io/$PROJECT_ID/power-plant-2/webhook:${COMMIT_SHA}
+      - --cache=true
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: gcloud
+    args:
+      - run
+      - services
+      - create
+      - $_SERVICE_NAME
+      - '--platform=managed'
+      - '--image=gcr.io/$PROJECT_ID/power-plant-2/webhook:$COMMIT_SHA'
+      - '--region=$_DEPLOY_REGION'
+      - '--quiet'
+substitutions:
+  _DEPLOY_REGION: asia-northeast1
+  _SERVICE_NAME: webhook

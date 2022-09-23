@@ -25,6 +25,7 @@
     "instances": [
       {
         "policy": {
+          "machineType": "e2-small",
           "provisioningModel": "SPOT"
         }
       }
