@@ -6,21 +6,17 @@ RUN pip install awscli
 
 FROM base as installer
 
-ARG BUILD_CONTEXT
-
-COPY ./jobs/$BUILD_CONTEXT/package.json ./jobs/$BUILD_CONTEXT/
-COPY ./jobs/$BUILD_CONTEXT/yarn.lock ./jobs/$BUILD_CONTEXT/
+COPY ./jobs/download/package.json ./jobs/download/
+COPY ./jobs/download/yarn.lock ./jobs/download/
 COPY ./db/prisma/schema.prisma ./db/prisma/schema.prisma
 
-WORKDIR /app/jobs/$BUILD_CONTEXT
+WORKDIR /app/jobs/download
 RUN yarn install
 
 FROM base as job
 
-ARG BUILD_CONTEXT
-
-COPY --from=installer /app/jobs/$BUILD_CONTEXT/node_modules ./node_modules
-COPY ./jobs/$BUILD_CONTEXT /app
+COPY --from=installer /app/jobs/download/node_modules ./node_modules
+COPY ./jobs/download /app
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["yarn", "start"]
