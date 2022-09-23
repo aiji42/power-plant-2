@@ -1,12 +1,17 @@
 import { $, fs, path } from "zx";
 import ffprobe from "ffprobe";
+import { PrismaClient, TaskStatus, TaskType, Task } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 const MIN_SIZE = 400 * 1024 * 1024; // 400M
-// const MIN_SIZE = 100 * 1024 * 1024; // 100M
 const DOWNLOAD_DIR = "/downloads";
 
 void (async function () {
-  const target = "";
+  const queue = await getQueueAndStart();
+  if (!queue) return;
+
+  const target = queue.data.targetUrl;
   // TODO: timeout
   await $`aria2c -d /downloads --seed-time=0 --max-overall-upload-limit=1K --bt-stop-timeout=300 --lowest-speed-limit=500K ${target}`;
 
@@ -54,4 +59,22 @@ const scanMetaInfo = async (
     else console.error(`Unexpected error on scanning media: ${path}`);
     return {};
   }
+};
+
+type QueueData = {
+  targetUrl: string;
+};
+
+const getQueueAndStart = async (): Promise<
+  null | (Task & { data: QueueData })
+> => {
+  const queue = await prisma.task.findFirst({
+    where: { status: TaskStatus.Waiting, type: TaskType.Download },
+  });
+  if (!queue) return null;
+
+  return (await prisma.task.update({
+    where: { id: queue.id },
+    data: { status: TaskStatus.Running, startedAt: new Date() },
+  })) as Task & { data: QueueData };
 };
