@@ -91,6 +91,8 @@ const download = async (
 };
 
 const uploadToStorage = async (file: string, key: string): Promise<string> => {
+  // https://developers.cloudflare.com/r2/data-access/s3-api/api/#implemented-object-level-operations
+  await $`aws configure set default.s3.max_concurrent_requests 2`;
   await $`aws s3 cp --endpoint-url https://${process.env.R2_CLIENT_ID}.r2.cloudflarestorage.com ${file} s3://power-plant-2/${key}`;
   return `${process.env.R2_PUBLIC_URL}/${key}`;
 };
