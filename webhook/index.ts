@@ -12,7 +12,7 @@ const createRandomString = (length: number) => {
 
 const app = fastify({ logger: true });
 
-app.post("/", async (request, reply) => {
+app.post("/download-task", async (request, reply) => {
   const log =
     await $`gcloud beta batch jobs submit download-job-${createRandomString(
       16
