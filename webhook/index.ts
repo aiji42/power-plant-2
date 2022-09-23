@@ -1,8 +1,10 @@
 import fastify from "fastify";
+import { $ } from "zx";
 
 const app = fastify({ logger: true });
 
-app.get("/", function (request, reply) {
+app.get("/", async (request, reply) => {
+  await $`ls -l`;
   reply.code(200).send({
     hello: "world",
     httpVersion: request.raw.httpVersion,
