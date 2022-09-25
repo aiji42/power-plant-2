@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  webhook:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: base
+    volumes:
+      - ./:/app:cached
+      - node_modules:/app/node_modules
+    entrypoint: ./entrypoint.sh
+    command: yarn start
+    stdin_open: true
+    tty: false
+  cloudflared:
+    image: cloudflare/cloudflared
+    depends_on:
+      - webhook
+    command: tunnel --url http://webhook:3000
+
+volumes:
+  node_modules:
