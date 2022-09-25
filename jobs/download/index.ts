@@ -7,6 +7,7 @@ const prisma = new PrismaClient({ log: ["info", "warn", "error"] });
 const MIN_SIZE = 400 * 1024 * 1024; // 400M
 const DOWNLOAD_TIMEOUT = 30 * 60 * 1000; // 30min
 const DOWNLOAD_DIR = "/downloads";
+const BUCKET = "power-plant-2";
 
 const listFiles = (dir: string): string[] =>
   fs.readdirSync(dir, { withFileTypes: true }).flatMap((dirent) => {
@@ -93,13 +94,14 @@ const download = async (
 const uploadToStorage = async (file: string, key: string): Promise<string> => {
   // https://developers.cloudflare.com/r2/data-access/s3-api/api/#implemented-object-level-operations
   await $`aws configure set default.s3.max_concurrent_requests 2`;
-  await $`aws s3 cp --endpoint-url https://${process.env.R2_CLIENT_ID}.r2.cloudflarestorage.com ${file} s3://power-plant-2/${key}`;
+  await $`aws s3 cp --endpoint-url https://${process.env.R2_CLIENT_ID}.r2.cloudflarestorage.com ${file} s3://${BUCKET}/${key}`;
   return `${process.env.R2_PUBLIC_URL}/${key}`;
 };
 
 const saveDbAsMedia = async (
   filePath: string,
   url: string,
+  key: string,
   job: DownloadTask
 ) => {
   const { size, ...meta } = await scanMetaInfo(filePath);
@@ -112,6 +114,8 @@ const saveDbAsMedia = async (
       url,
       size,
       meta,
+      bucket: BUCKET,
+      key,
     },
   });
 };
@@ -135,12 +139,12 @@ const main = async () => {
       timeout(DOWNLOAD_TIMEOUT),
     ]);
 
-    for (let [index, file] of Object.entries(fileNames)) {
-      const url = await uploadToStorage(
-        file,
-        `${task.product.code}/${createRandomString(16)}${path.extname(file)}`
-      );
-      await saveDbAsMedia(file, url, task);
+    for (let file of fileNames) {
+      const key = `${task.product.code}/${createRandomString(16)}${path.extname(
+        file
+      )}`;
+      const url = await uploadToStorage(file, key);
+      await saveDbAsMedia(file, url, key, task);
     }
     await complete(task.id);
   } catch (e) {
