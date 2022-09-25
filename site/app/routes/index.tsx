@@ -1,4 +1,15 @@
+import { productsFromM } from "~/libs/products/mgs.server";
+import { useLoaderData } from "@remix-run/react";
+
+export const loader = async () => {
+  return await productsFromM(1);
+};
+
 export default function Index() {
+  const data = useLoaderData<typeof loader>();
+
+  console.log(data);
+
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }}>
       <h1>Welcome to Remix</h1>
