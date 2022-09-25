@@ -39,6 +39,8 @@ model Media {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @default(now()) @updatedAt
   url           String
+  bucket        String
+  key           String
   size          Int
   meta          Json
   compressTasks CompressTask[]
