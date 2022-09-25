@@ -1,18 +1,14 @@
-export type ProductListItem = {
-  sku: string;
-  image_path: string;
-  name: string;
-};
+import { ProductList } from "~/libs/products/priducts";
 
 export const productsFromMSG = async (
   page: number,
   sort?: string,
   keyword?: string | null
-): Promise<ProductListItem[]> => {
+): Promise<ProductList> => {
   const url = new URL(`${process.env.MGS_HOST}/api/n/search/index.php`);
-  url.searchParams.append("page", String(page));
-  url.searchParams.append("sort", sort ?? "new");
-  keyword && url.searchParams.append("search_word", keyword);
+  url.searchParams.set("page", String(page));
+  url.searchParams.set("sort", sort ?? "new");
+  keyword && url.searchParams.set("search_word", keyword);
 
   const res = await fetch(url, {
     headers: {
@@ -20,7 +16,9 @@ export const productsFromMSG = async (
       "Content-Type": "application/json",
     },
   });
-  const result: { search_result: ProductListItem[] } = await res.json();
+  const result: {
+    search_result: { sku: string; name: string; image_path: string }[];
+  } = await res.json();
   return result.search_result.map((item) => ({
     sku: item.sku,
     name: item.name,
