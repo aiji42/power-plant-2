@@ -2,10 +2,13 @@
   "private": true,
   "sideEffects": false,
   "scripts": {
+    "db:schema:cp": "cp ../db/prisma/schema.prisma ./schema.prisma",
     "build": "remix build",
-    "dev": "remix dev"
+    "dev": "remix dev",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@prisma/client": "^4.3.1",
     "@remix-run/node": "^1.7.2",
     "@remix-run/react": "^1.7.2",
     "@remix-run/vercel": "^1.7.2",
@@ -20,9 +23,13 @@
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
     "eslint": "^8.23.1",
+    "prisma": "^4.3.1",
     "typescript": "^4.7.4"
   },
   "engines": {
     "node": ">=14"
+  },
+  "prisma": {
+    "schema": "./schema.prisma"
   }
 }
