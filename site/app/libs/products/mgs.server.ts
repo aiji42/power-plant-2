@@ -4,7 +4,7 @@ export type ProductListItem = {
   name: string;
 };
 
-export const productsFromM = async (
+export const productsFromMSG = async (
   page: number,
   sort?: string,
   keyword?: string | null
