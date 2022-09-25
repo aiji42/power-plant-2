@@ -60,7 +60,7 @@ const Document = withEmotionCache(
     }, []);
 
     return (
-      <html lang="en">
+      <html lang="ja">
         <head>
           <Meta />
           <Links />
