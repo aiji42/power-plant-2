@@ -15,8 +15,12 @@ steps:
       - '--image=gcr.io/$PROJECT_ID/power-plant-2/webhook:$COMMIT_SHA'
       - '--region=$_DEPLOY_REGION'
       - '--service-account=$_SERVICE_ACCOUNT'
+      - '--set-env-vars=R2_ACCESS_KEY_ID=$_R2_ACCESS_KEY_ID,R2_SECRET_ACCESS_KEY=$_R2_SECRET_ACCESS_KEY,R2_CLIENT_ID=$_R2_CLIENT_ID'
       - '--quiet'
 substitutions:
   _DEPLOY_REGION: asia-northeast1
   _SERVICE_NAME: webhook
   _SERVICE_ACCOUNT: your-service-account
+  _R2_ACCESS_KEY_ID: input
+  _R2_SECRET_ACCESS_KEY: input
+  _R2_CLIENT_ID: input
