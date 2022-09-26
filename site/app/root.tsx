@@ -6,11 +6,13 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useTransition,
 } from "@remix-run/react";
 import { withEmotionCache } from "@emotion/react";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { ServerStyleContext, ClientStyleContext } from "~/styles/context";
 import { ReactNode, useContext, useEffect } from "react";
+import { ProgressBar } from "~/components/ProgressBar";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -59,6 +61,8 @@ const Document = withEmotionCache(
       clientStyleData?.reset();
     }, []);
 
+    const transition = useTransition();
+
     return (
       <html lang="ja">
         <head>
@@ -77,6 +81,7 @@ const Document = withEmotionCache(
           <ScrollRestoration />
           <Scripts />
           <LiveReload />
+          {transition.state === "loading" && <ProgressBar />}
         </body>
       </html>
     );
