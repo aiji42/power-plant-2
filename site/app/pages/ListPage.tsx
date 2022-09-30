@@ -17,9 +17,11 @@ export function ListPage() {
           </Link>
         ))}
       </Grid>
-      <ChakraLink as={Link} to={data.nextTo}>
-        Next
-      </ChakraLink>
+      <Box mb={8}>
+        <ChakraLink as={Link} to={data.nextTo}>
+          Next
+        </ChakraLink>
+      </Box>
     </Box>
   );
 }

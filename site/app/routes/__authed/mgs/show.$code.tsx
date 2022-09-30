@@ -2,7 +2,7 @@ import { DataFunctionArgs } from "@remix-run/node";
 import { RouteParams } from "routes-gen";
 import { productFromMGS } from "~/libs/poduct/mgs.server";
 import { useLoaderData } from "@remix-run/react";
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { useReducer } from "react";
 
 export const loader = async ({ params }: DataFunctionArgs) => {
@@ -21,7 +21,6 @@ export default () => {
     <Box w="full">
       <Box
         h={80}
-        w="full"
         bgSize="cover"
         style={{
           backgroundImage: `url('${data.product.imageUrls[0]}')`,
