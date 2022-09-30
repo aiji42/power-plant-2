@@ -8,7 +8,7 @@ const makeUrl = (page: number) => {
 };
 
 const headers = {
-  "User-Agent": process.env.MGS_UA ?? "",
+  "User-Agent": process.env.MGS_UA!,
   "Content-Type": "application/json",
 };
 

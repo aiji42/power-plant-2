@@ -52,10 +52,10 @@ export const productsSearchFromFAN = async (params: {
   keyword?: string | null;
 }): Promise<Result> => {
   const url = new URL(`${process.env.FAN_API_ENDPOINT}`);
-  url.searchParams.set("api_id", process.env.FAN_API_ID ?? "");
-  url.searchParams.set("affiliate_id", process.env.FAN_AFF_ID ?? "");
-  url.searchParams.set("site", process.env.FAN_SITE ?? "");
-  url.searchParams.set("service", process.env.FAN_SERVICE ?? "");
+  url.searchParams.set("api_id", process.env.FAN_API_ID!);
+  url.searchParams.set("affiliate_id", process.env.FAN_AFF_ID!);
+  url.searchParams.set("site", process.env.FAN_SITE!);
+  url.searchParams.set("service", process.env.FAN_SERVICE!);
   url.searchParams.set("sort", "date");
   Object.entries(params)
     .filter(([, v]) => v)
