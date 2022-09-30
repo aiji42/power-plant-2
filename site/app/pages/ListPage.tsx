@@ -11,7 +11,7 @@ export function ListPage() {
       <Grid templateColumns="repeat(3, 1fr)" gap={2}>
         {data.items.map(({ image_path: src, name, sku: code }) => (
           <Link key={code} to={route("/mgs/show/:code", { code })}>
-            <GridItem w="100%">
+            <GridItem w="100%" minH={48}>
               <img src={src} alt={name} loading="lazy" />
             </GridItem>
           </Link>

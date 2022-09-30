@@ -18,28 +18,27 @@ export default () => {
   const data = useLoaderData<typeof loader>();
   const [showFull, toggle] = useReducer((s) => !s, false);
   return (
-    <Flex w="full" alignItems="center" justifyContent="center">
-      <Box>
-        <Box
-          h={64}
-          bgSize="cover"
-          style={{
-            backgroundImage: `url('${data.product.imageUrls[0]}')`,
-          }}
-        />
-        <Box py={6} px={4}>
-          <Text
-            as="h1"
-            noOfLines={showFull ? undefined : 3}
-            fontSize={"xl"}
-            color="white"
-            fontWeight="bold"
-            onClick={toggle}
-          >
-            {data.product.title}
-          </Text>
-        </Box>
+    <Box w="full">
+      <Box
+        h={80}
+        w="full"
+        bgSize="cover"
+        style={{
+          backgroundImage: `url('${data.product.imageUrls[0]}')`,
+        }}
+      />
+      <Box py={6} px={4}>
+        <Text
+          as="h1"
+          noOfLines={showFull ? undefined : 3}
+          fontSize={"xl"}
+          color="white"
+          fontWeight="bold"
+          onClick={toggle}
+        >
+          {data.product.title}
+        </Text>
       </Box>
-    </Flex>
+    </Box>
   );
 };

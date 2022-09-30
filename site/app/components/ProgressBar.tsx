@@ -28,8 +28,7 @@ const style = css`
   right: 0;
   z-index: 100;
   height: 3px;
-  background: #27c4f5
-    linear-gradient(to right, #27c4f5, #a307ba, #fd8d32, #58c322, #27c4f5);
+  background: #27c4f5 linear-gradient(to right, #27c4f5, #337ecb, #324dfd);
   width: 100%;
   background-size: 200% 200%;
   animation: ${postDiverAnimation} 2s linear infinite,
