@@ -64,7 +64,7 @@ const Document = withEmotionCache(
     const transition = useTransition();
 
     return (
-      <html lang="ja">
+      <html lang="ja" style={{ colorScheme: "dark" }}>
         <head>
           <Meta />
           <Links />
