@@ -38,18 +38,18 @@ export const productFromMGS = async (code: string): Promise<Product> => {
       if (key.innerText === "収録時間")
         return { ...res, length: parseInt(value.childNodes[0].innerText) };
       if (key.innerText === "配信開始日")
-        return { ...res, releasedAt: value.childNodes[0].innerText };
+        return { ...res, releasedAt: value.childNodes[0].innerText.trim() };
       if (key.innerText === "品番")
-        return { ...res, code: value.childNodes[0].innerText };
+        return { ...res, code: value.childNodes[0].innerText.trim() };
       if (key.innerText === "シリーズ")
-        return { ...res, series: value.childNodes[0].innerText };
+        return { ...res, series: value.childNodes[0].innerText.trim() };
       if (key.innerText === "メーカー")
-        return { ...res, maker: value.childNodes[0].innerText };
+        return { ...res, maker: value.childNodes[0].innerText.trim() };
       if (key.innerText === "レーベル")
-        return { ...res, label: value.childNodes[0].innerText };
+        return { ...res, label: value.childNodes[0].innerText.trim() };
       return res;
     },
-    { imageUrls: [], title: "", sample: "", code: "", releasedAt: "" }
+    { imageUrls: [], title: "", code: "", releasedAt: "" }
   );
   info.title =
     root.querySelector("title")?.innerText.match(/「(.+)」/)?.[1] ?? "";

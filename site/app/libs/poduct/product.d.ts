@@ -1,7 +1,7 @@
 export type Product = {
   imageUrls: string[];
   title: string;
-  sample: string;
+  sample?: string;
   code: string;
   releasedAt?: string;
   series?: string;
