@@ -47,11 +47,17 @@ export const Product = () => {
             {data.product.title}
           </Text>
         </Box>
-        {fetcher.type !== "done" && <Skeleton borderRadius="full" height={7} />}
+        {fetcher.type !== "done" && <Skeleton borderRadius="full" height={8} />}
         {fetcher.type === "done" && fetcher.data && (
           <Box>
             {fetcher.data.casts.map((c) => (
-              <Tag key={c.name} size="lg" colorScheme="red" borderRadius="full">
+              <Tag
+                key={c.name}
+                size="lg"
+                colorScheme="red"
+                borderRadius="full"
+                mr={1}
+              >
                 <TagLabel>{c.name}</TagLabel>
               </Tag>
             ))}
