@@ -7,7 +7,7 @@ const headers = {
   "User-Agent": process.env.MGS_UA!,
 };
 
-export const productFromMGS = async (code: string): Promise<Product> => {
+export const productFromMGS = async (code: string): Promise<Product | null> => {
   const url = new URL(
     `${process.env.MGS_HOST}/product/product_detail/${code}/`
   );
@@ -51,6 +51,8 @@ export const productFromMGS = async (code: string): Promise<Product> => {
     },
     { imageUrls: [], title: "", code: "", releasedAt: "" }
   );
+  if (!info.code) return null;
+
   info.title =
     root.querySelector("title")?.innerText.match(/「(.+)」/)?.[1] ?? "";
   info.imageUrls = root
