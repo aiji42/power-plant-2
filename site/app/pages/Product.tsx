@@ -1,11 +1,28 @@
-import { useLoaderData } from "@remix-run/react";
-import { useReducer } from "react";
-import { Box, Image, List, ListItem, Stack, Text } from "@chakra-ui/react";
+import { useFetcher, useLoaderData } from "@remix-run/react";
+import { useEffect, useReducer } from "react";
+import {
+  Box,
+  Image,
+  List,
+  ListItem,
+  Stack,
+  Text,
+  Skeleton,
+  Tag,
+  TagLabel,
+} from "@chakra-ui/react";
 import { loader } from "~/routes/__authed/mgs/show.$code";
+import { loader as castsLoader } from "~/routes/__authed/api/casts.$code";
+import { route } from "routes-gen";
 
 export const Product = () => {
   const data = useLoaderData<typeof loader>();
   const [showFull, toggle] = useReducer((s) => !s, false);
+  const fetcher = useFetcher<Awaited<ReturnType<typeof castsLoader>>>();
+  useEffect(() => {
+    fetcher.load(route("/api/casts/:code", { code: data.product.code }));
+  }, [fetcher.load, data.product.code]);
+
   return (
     <Box w="full" p={2}>
       <Image
@@ -30,6 +47,16 @@ export const Product = () => {
             {data.product.title}
           </Text>
         </Box>
+        {fetcher.type !== "done" && <Skeleton borderRadius="full" height={7} />}
+        {fetcher.type === "done" && fetcher.data && (
+          <Box>
+            {fetcher.data.casts.map((c) => (
+              <Tag key={c.name} size="lg" colorScheme="red" borderRadius="full">
+                <TagLabel>{c.name}</TagLabel>
+              </Tag>
+            ))}
+          </Box>
+        )}
         <Box>
           <List spacing={2}>
             <ListItem>
