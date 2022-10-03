@@ -13,7 +13,7 @@ export const productFromFAN = async (code: string): Promise<Product | null> => {
       ...(item.sampleImageURL?.sample_l.image ?? []),
     ],
     code: item.content_id,
-    sample: "",
+    sample: (await sampleMovie(item.content_id)) ?? undefined,
     releasedAt: item.date,
     maker: item.iteminfo.maker[0].name,
     label: item.iteminfo.label[0].name,
@@ -23,4 +23,12 @@ export const productFromFAN = async (code: string): Promise<Product | null> => {
       : Number(item.volume),
     genres: item.iteminfo.genre?.map(({ name }) => name) ?? [],
   };
+};
+
+const sampleMovie = async (cid: string) => {
+  const res = await fetch(`${process.env.FAN_SAMPLE_ENDPOINT}${cid}`);
+  const html = await res.text();
+  const [, movie] = html.match(/"src":"(.+?\.mp4)","title"/) ?? [];
+  if (!movie) return null;
+  return `https:${movie.replace(/\\/g, "")}`;
 };
