@@ -11,18 +11,18 @@ import {
   Tag,
   TagLabel,
   Flex,
-  IconButton,
   Icon,
 } from "@chakra-ui/react";
 import { loader } from "~/routes/__authed/mgs/show.$code";
 import { loader as castsLoader } from "~/routes/__authed/api/casts.$code";
 import { route } from "routes-gen";
 import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
+import { SerializeFrom } from "@remix-run/node";
 
 export const Product = () => {
   const data = useLoaderData<typeof loader>();
   const [showFull, toggle] = useReducer((s) => !s, false);
-  const fetcher = useFetcher<Awaited<ReturnType<typeof castsLoader>>>();
+  const fetcher = useFetcher<SerializeFrom<typeof castsLoader>>();
   useEffect(() => {
     fetcher.load(route("/api/casts/:code", { code: data.product.code }));
   }, [fetcher.load, data.product.code]);
