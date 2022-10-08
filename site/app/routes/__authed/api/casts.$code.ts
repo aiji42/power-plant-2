@@ -1,4 +1,4 @@
-import { DataFunctionArgs } from "@remix-run/node";
+import { DataFunctionArgs, HeadersFunction } from "@remix-run/node";
 import { RouteParams } from "routes-gen";
 import { searchCasts } from "~/libs/casts/casts";
 import { formatter } from "~/libs/sku/sku";
@@ -10,3 +10,9 @@ export const loader = async ({ params }: DataFunctionArgs) => {
     casts,
   };
 };
+
+export const headers: HeadersFunction = () => ({
+  "Cache-Control": `max-age=0, s-maxage=${300}, stale-while-revalidate=${
+    3600 * 24
+  }`,
+});

@@ -1,4 +1,4 @@
-import { DataFunctionArgs } from "@remix-run/node";
+import { DataFunctionArgs, HeadersFunction } from "@remix-run/node";
 import { RouteParams } from "routes-gen";
 import { productFromFAN } from "~/libs/poduct/fan.server";
 export { Product as default } from "~/pages/Product";
@@ -12,3 +12,9 @@ export const loader = async ({ params }: DataFunctionArgs) => {
     product,
   };
 };
+
+export const headers: HeadersFunction = () => ({
+  "Cache-Control": `max-age=0, s-maxage=${300}, stale-while-revalidate=${
+    3600 * 24
+  }`,
+});

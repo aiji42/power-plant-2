@@ -10,10 +10,14 @@ import {
   Skeleton,
   Tag,
   TagLabel,
+  Flex,
+  IconButton,
+  Icon,
 } from "@chakra-ui/react";
 import { loader } from "~/routes/__authed/mgs/show.$code";
 import { loader as castsLoader } from "~/routes/__authed/api/casts.$code";
 import { route } from "routes-gen";
+import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 
 export const Product = () => {
   const data = useLoaderData<typeof loader>();
@@ -34,7 +38,11 @@ export const Product = () => {
         h="320px"
         objectPosition={"right top"}
       />
+
       <Stack my={6} px={4} spacing={6}>
+        <Flex justify="end">
+          <Icon as={BsBookmark} boxSize={6} color="teal.300" />
+        </Flex>
         <Box>
           <Text
             as="h1"
@@ -49,7 +57,7 @@ export const Product = () => {
         </Box>
         {fetcher.type !== "done" && <Skeleton borderRadius="full" height={8} />}
         {fetcher.type === "done" && fetcher.data && (
-          <Box>
+          <Box lineHeight={2.25}>
             {fetcher.data.casts.map((c) => (
               <Tag
                 key={c.name}
