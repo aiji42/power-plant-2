@@ -1,6 +1,7 @@
-import { DataFunctionArgs, HeadersFunction } from "@remix-run/node";
+import { DataFunctionArgs, json } from "@remix-run/node";
 import { RouteParams } from "routes-gen";
 import { productFromMGS } from "~/libs/poduct/mgs.server";
+import { cacheHeaders } from "~/libs/cache/cache.server";
 export { Product as default } from "~/pages/Product";
 
 export const loader = async ({ params }: DataFunctionArgs) => {
@@ -8,13 +9,12 @@ export const loader = async ({ params }: DataFunctionArgs) => {
   const product = await productFromMGS(code);
   if (!product) throw new Response("", { status: 404 });
 
-  return {
-    product,
-  };
+  return json(
+    {
+      product,
+    },
+    { headers: cacheHeaders() }
+  );
 };
 
-export const headers: HeadersFunction = () => ({
-  "Cache-Control": `max-age=0, s-maxage=${300}, stale-while-revalidate=${
-    3600 * 24
-  }`,
-});
+export { headers } from "~/libs/cache/cache.server";
