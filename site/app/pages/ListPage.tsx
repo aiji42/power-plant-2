@@ -27,37 +27,20 @@ export function ListPage() {
   return (
     <Box w="100%" p={2} {...handler}>
       <Flex mx={4} my={4}>
-        <ChakraLink
-          as={Link}
-          to={route("/mgs/:page", { page: "1" })}
-          fontSize="xl"
-          mr={4}
-          color={location.pathname.startsWith("/mgs") ? "teal.300" : "gray.300"}
-        >
-          MGS
-        </ChakraLink>
-        <ChakraLink
-          as={Link}
-          to={route("/fana/:page", { page: "1" })}
-          fontSize="xl"
-          mr={4}
-          color={
-            location.pathname.startsWith("/fana") ? "teal.300" : "gray.300"
-          }
-        >
-          FAN-A
-        </ChakraLink>
-        <ChakraLink
-          as={Link}
-          to={route("/fanc/:page", { page: "1" })}
-          fontSize="xl"
-          mr={4}
-          color={
-            location.pathname.startsWith("/fanc") ? "teal.300" : "gray.300"
-          }
-        >
-          FAN-C
-        </ChakraLink>
+        {(["mgs", "fana", "fanc"] as const).map((c) => (
+          <ChakraLink
+            key={c}
+            as={Link}
+            to={route(`/${c}/:page`, { page: "1" })}
+            fontSize="xl"
+            mr={4}
+            color={
+              location.pathname.startsWith(`/${c}`) ? "teal.300" : "gray.300"
+            }
+          >
+            {c.toUpperCase()}
+          </ChakraLink>
+        ))}
       </Flex>
       <Grid templateColumns="repeat(3, 1fr)" gap={2}>
         {data.items.map(({ image_path: src, name, sku: code, casts }) => (
