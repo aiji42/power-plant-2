@@ -12,6 +12,7 @@ import {
   TagLabel,
   Flex,
   Icon,
+  Spacer,
 } from "@chakra-ui/react";
 import { loader } from "~/routes/__authed/mgs/show.$code";
 import { loader as castsLoader } from "~/routes/__authed/api/casts.$code";
@@ -41,7 +42,16 @@ export const Product = () => {
       />
 
       <Stack my={6} px={4} spacing={6}>
-        <Flex justify="end">
+        <Flex>
+          {data.product.sample && (
+            <video
+              width="72px"
+              height="auto"
+              src={data.product.sample}
+              controls
+            />
+          )}
+          <Spacer />
           <a href={data.product.url} target="_blank" rel="noopener noreferrer">
             <Icon as={BiLinkExternal} boxSize={6} mr={4} />
           </a>
@@ -125,14 +135,6 @@ export const Product = () => {
         </Box>
       </Stack>
       <Stack spacing={2}>
-        {data.product.sample && (
-          <video
-            width="100%"
-            height="auto"
-            src={data.product.sample}
-            controls
-          />
-        )}
         {data.product.imageUrls.map((image) => (
           <Image src={image} key={image} loading="lazy" />
         ))}
