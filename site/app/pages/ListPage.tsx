@@ -1,14 +1,28 @@
-import { Link, useLoaderData, useLocation } from "@remix-run/react";
-import { Grid, GridItem, Box, Link as ChakraLink } from "@chakra-ui/react";
+import {
+  Link,
+  PrefetchPageLinks,
+  useLoaderData,
+  useLocation,
+} from "@remix-run/react";
+import {
+  Grid,
+  GridItem,
+  Box,
+  Slide,
+  CircularProgress,
+  Center,
+} from "@chakra-ui/react";
 import { ProductList } from "~/libs/products/priducts";
 import { route } from "routes-gen";
+import { useSwipeToNext } from "~/hooks/useSwipeToNext";
 
 export function ListPage() {
   const data = useLoaderData<{ items: ProductList; nextTo: string }>();
   const location = useLocation();
+  const { handler, swiping } = useSwipeToNext(data.nextTo);
 
   return (
-    <Box w="100%" p={2}>
+    <Box w="100%" p={2} {...handler}>
       <Grid templateColumns="repeat(3, 1fr)" gap={2}>
         {data.items.map(({ image_path: src, name, sku: code }) => (
           <Link
@@ -27,11 +41,12 @@ export function ListPage() {
           </Link>
         ))}
       </Grid>
-      <Box mb={8}>
-        <ChakraLink as={Link} to={data.nextTo}>
-          Next
-        </ChakraLink>
-      </Box>
+      <Slide direction="bottom" in={swiping}>
+        <Center>
+          <CircularProgress isIndeterminate color="teal.300" />
+        </Center>
+      </Slide>
+      <PrefetchPageLinks page={data.nextTo} />
     </Box>
   );
 }
