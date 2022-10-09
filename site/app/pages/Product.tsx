@@ -13,6 +13,7 @@ import {
   Flex,
   Icon,
   Spacer,
+  Link,
 } from "@chakra-ui/react";
 import { loader } from "~/routes/__authed/mgs/show.$code";
 import { loader as castsLoader } from "~/routes/__authed/api/casts.$code";
@@ -20,6 +21,7 @@ import { route } from "routes-gen";
 import { SerializeFrom } from "@remix-run/node";
 import { BookmarkButton } from "~/components/BookmarkButton";
 import { BiLinkExternal, BiPlayCircle } from "react-icons/bi";
+import { TorrentPanel } from "~/components/TorrentPanel";
 
 export const Product = () => {
   const data = useLoaderData<typeof loader>();
@@ -32,7 +34,7 @@ export const Product = () => {
   const ref = useRef<HTMLVideoElement>(null);
 
   return (
-    <Box w="full" p={2}>
+    <Box w="full" p={2} position="relative">
       <Image
         rounded={"md"}
         src={data.product.imageUrls[0]}
@@ -42,14 +44,18 @@ export const Product = () => {
         h="320px"
         objectPosition={"right top"}
       />
-
+      <Box position="absolute" top={6} right={6}>
+        <Link href={data.product.url} target="_blank" rel="noopener noreferrer">
+          <Icon as={BiLinkExternal} boxSize={8} color="teal.200" />
+        </Link>
+      </Box>
       <Stack my={6} px={4} spacing={6}>
         <Flex>
           {data.product.sample && (
             <Box>
               <Icon
                 as={BiPlayCircle}
-                boxSize={6}
+                boxSize={8}
                 mr={4}
                 onClick={() => ref.current?.play()}
               />
@@ -63,9 +69,7 @@ export const Product = () => {
             </Box>
           )}
           <Spacer />
-          <a href={data.product.url} target="_blank" rel="noopener noreferrer">
-            <Icon as={BiLinkExternal} boxSize={6} mr={4} />
-          </a>
+          <TorrentPanel code={data.product.code} mr={4} />
           <BookmarkButton code={data.product.code} />
         </Flex>
         <Box>
@@ -91,7 +95,7 @@ export const Product = () => {
                 size="lg"
                 colorScheme="red"
                 borderRadius="full"
-                mr={1}
+                mr={2}
               >
                 <TagLabel>{c.name}</TagLabel>
               </Tag>

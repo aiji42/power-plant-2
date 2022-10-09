@@ -3,7 +3,7 @@ import { SerializeFrom } from "@remix-run/node";
 import { loader as bookmarkLoader } from "~/routes/__authed/api/bookmark.$code";
 import { useEffect } from "react";
 import { route } from "routes-gen";
-import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
+import { BiBookmark } from "react-icons/bi";
 import { Icon } from "@chakra-ui/react";
 
 export const BookmarkButton = ({ code }: { code: string }) => {
@@ -29,8 +29,8 @@ export const BookmarkButton = ({ code }: { code: string }) => {
 
   return (
     <Icon
-      as={isBookmarked ? BsBookmarkFill : BsBookmark}
-      boxSize={6}
+      as={BiBookmark}
+      boxSize={8}
       color={isBookmarked ? "teal.300" : undefined}
       onClick={onClick}
     />

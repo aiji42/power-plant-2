@@ -2,6 +2,7 @@ declare module "routes-gen" {
   export type RouteParams = {
     "/": Record<string, never>;
     "/api/bookmark/:code": { "code": string };
+    "/api/torrent/:code": { "code": string };
     "/api/casts/:code": { "code": string };
     "/fana/show/:code": { "code": string };
     "/fanc/show/:code": { "code": string };
@@ -16,6 +17,7 @@ declare module "routes-gen" {
     T extends
       | ["/"]
       | ["/api/bookmark/:code", RouteParams["/api/bookmark/:code"]]
+      | ["/api/torrent/:code", RouteParams["/api/torrent/:code"]]
       | ["/api/casts/:code", RouteParams["/api/casts/:code"]]
       | ["/fana/show/:code", RouteParams["/fana/show/:code"]]
       | ["/fanc/show/:code", RouteParams["/fanc/show/:code"]]
