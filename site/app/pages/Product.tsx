@@ -1,5 +1,5 @@
 import { useFetcher, useLoaderData } from "@remix-run/react";
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import {
   Box,
   Image,
@@ -19,7 +19,7 @@ import { loader as castsLoader } from "~/routes/__authed/api/casts.$code";
 import { route } from "routes-gen";
 import { SerializeFrom } from "@remix-run/node";
 import { BookmarkButton } from "~/components/BookmarkButton";
-import { BiLinkExternal } from "react-icons/bi";
+import { BiLinkExternal, BiPlayCircle } from "react-icons/bi";
 
 export const Product = () => {
   const data = useLoaderData<typeof loader>();
@@ -28,6 +28,8 @@ export const Product = () => {
   useEffect(() => {
     castFetcher.load(route("/api/casts/:code", { code: data.product.code }));
   }, [castFetcher.load, data.product.code]);
+
+  const ref = useRef<HTMLVideoElement>(null);
 
   return (
     <Box w="full" p={2}>
@@ -44,12 +46,21 @@ export const Product = () => {
       <Stack my={6} px={4} spacing={6}>
         <Flex>
           {data.product.sample && (
-            <video
-              width="72px"
-              height="auto"
-              src={data.product.sample}
-              controls
-            />
+            <Box>
+              <Icon
+                as={BiPlayCircle}
+                boxSize={6}
+                mr={4}
+                onClick={() => ref.current?.play()}
+              />
+              <video
+                ref={ref}
+                width={0}
+                height={0}
+                src={data.product.sample}
+                controls
+              />
+            </Box>
           )}
           <Spacer />
           <a href={data.product.url} target="_blank" rel="noopener noreferrer">
