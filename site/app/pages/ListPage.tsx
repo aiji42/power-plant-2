@@ -42,7 +42,7 @@ export function ListPage() {
         ))}
       </Grid>
       <Slide direction="bottom" in={swiping}>
-        <Center>
+        <Center mb={24}>
           <CircularProgress isIndeterminate color="teal.300" />
         </Center>
       </Slide>
