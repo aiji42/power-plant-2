@@ -33,5 +33,6 @@ export const productsFromMSG = async (page: number): Promise<ProductList> => {
     sku: item.sku,
     name: item.name,
     image_path: `${process.env.MGS_IMAGE_HOST}${item.image_path}`,
+    casts: [],
   }));
 };

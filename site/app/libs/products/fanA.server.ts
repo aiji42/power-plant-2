@@ -24,10 +24,11 @@ export const productsFromFANA = async (
             ![3036, 6793, 4060, 35, 6996, 1014, 1032, 4002].includes(id)
         )
       )
-      .map(({ title, content_id, imageURL }) => ({
+      .map(({ title, content_id, imageURL, iteminfo: { actress } }) => ({
         name: title,
         sku: content_id,
         image_path: imageURL.small,
+        casts: actress?.map(({ name }) => name) ?? [],
       })) ?? []
   );
 };

@@ -11,20 +11,56 @@ import {
   Slide,
   CircularProgress,
   Center,
+  Flex,
+  Link as ChakraLink,
+  Text,
 } from "@chakra-ui/react";
-import { ProductList } from "~/libs/products/priducts";
 import { route } from "routes-gen";
 import { useSwipeToNext } from "~/hooks/useSwipeToNext";
+import { loader } from "~/routes/__authed/mgs/$page";
 
 export function ListPage() {
-  const data = useLoaderData<{ items: ProductList; nextTo: string }>();
+  const data = useLoaderData<typeof loader>();
   const location = useLocation();
   const { handler, swiping } = useSwipeToNext(data.nextTo);
 
   return (
     <Box w="100%" p={2} {...handler}>
+      <Flex mx={4} my={4}>
+        <ChakraLink
+          as={Link}
+          to={route("/mgs/:page", { page: "1" })}
+          fontSize="xl"
+          mr={4}
+          color={location.pathname.startsWith("/mgs") ? "teal.300" : "gray.300"}
+        >
+          MGS
+        </ChakraLink>
+        <ChakraLink
+          as={Link}
+          to={route("/fana/:page", { page: "1" })}
+          fontSize="xl"
+          mr={4}
+          color={
+            location.pathname.startsWith("/fana") ? "teal.300" : "gray.300"
+          }
+        >
+          FAN-A
+        </ChakraLink>
+        <ChakraLink
+          as={Link}
+          to={route("/fanc/:page", { page: "1" })}
+          fontSize="xl"
+          mr={4}
+          color={
+            location.pathname.startsWith("/fanc") ? "teal.300" : "gray.300"
+          }
+        >
+          FAN-C
+        </ChakraLink>
+      </Flex>
       <Grid templateColumns="repeat(3, 1fr)" gap={2}>
-        {data.items.map(({ image_path: src, name, sku: code }) => (
+        {data.items.map(({ image_path: src, name, sku: code, casts }) => (
           <Link
             key={code}
             to={
@@ -37,6 +73,12 @@ export function ListPage() {
           >
             <GridItem w="100%" minH={48}>
               <img src={src} alt={name} loading="lazy" />
+              <Text fontSize="3xs" noOfLines={2}>
+                {name}
+              </Text>
+              <Text fontSize="3xs" noOfLines={1} color="teal.200">
+                {casts.join("/")}
+              </Text>
             </GridItem>
           </Link>
         ))}
