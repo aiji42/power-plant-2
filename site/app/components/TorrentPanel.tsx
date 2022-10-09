@@ -67,6 +67,8 @@ export const TorrentPanel = ({
             <Stat key={item.link} my={4}>
               <StatLabel noOfLines={2}>{item.title}</StatLabel>
               <StatHelpText>
+                {item.registeredAt}
+                <br />
                 {item.size}
                 <StatArrow type="increase" ml={2} />
                 {item.seeder}
