@@ -10,4 +10,5 @@ export type Product = {
   cast?: string[];
   length?: number;
   genres?: string[];
+  url: string;
 };

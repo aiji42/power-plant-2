@@ -16,16 +16,17 @@ import {
 import { loader } from "~/routes/__authed/mgs/show.$code";
 import { loader as castsLoader } from "~/routes/__authed/api/casts.$code";
 import { route } from "routes-gen";
-import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import { SerializeFrom } from "@remix-run/node";
+import { BookmarkButton } from "~/components/BookmarkButton";
+import { BiLinkExternal } from "react-icons/bi";
 
 export const Product = () => {
   const data = useLoaderData<typeof loader>();
   const [showFull, toggle] = useReducer((s) => !s, false);
-  const fetcher = useFetcher<SerializeFrom<typeof castsLoader>>();
+  const castFetcher = useFetcher<SerializeFrom<typeof castsLoader>>();
   useEffect(() => {
-    fetcher.load(route("/api/casts/:code", { code: data.product.code }));
-  }, [fetcher.load, data.product.code]);
+    castFetcher.load(route("/api/casts/:code", { code: data.product.code }));
+  }, [castFetcher.load, data.product.code]);
 
   return (
     <Box w="full" p={2}>
@@ -41,7 +42,10 @@ export const Product = () => {
 
       <Stack my={6} px={4} spacing={6}>
         <Flex justify="end">
-          <Icon as={BsBookmark} boxSize={6} color="teal.300" />
+          <a href={data.product.url} target="_blank" rel="noopener noreferrer">
+            <Icon as={BiLinkExternal} boxSize={6} mr={4} />
+          </a>
+          <BookmarkButton code={data.product.code} />
         </Flex>
         <Box>
           <Text
@@ -55,10 +59,12 @@ export const Product = () => {
             {data.product.title}
           </Text>
         </Box>
-        {fetcher.type !== "done" && <Skeleton borderRadius="full" height={8} />}
-        {fetcher.type === "done" && fetcher.data && (
+        {castFetcher.type !== "done" && (
+          <Skeleton borderRadius="full" height={8} />
+        )}
+        {castFetcher.type === "done" && castFetcher.data && (
           <Box lineHeight={2.25}>
-            {fetcher.data.casts.map((c) => (
+            {castFetcher.data.casts.map((c) => (
               <Tag
                 key={c.name}
                 size="lg"

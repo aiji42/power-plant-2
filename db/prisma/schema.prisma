@@ -18,9 +18,10 @@ model Product {
   title         String
   maker         String
   series        String
+  label         String
   genres        String[]
   url           String
-  releasedAt    DateTime
+  releasedAt    DateTime?
   imageUrls     String[]
   casts         Cast[]
   downloadTasks DownloadTask[]

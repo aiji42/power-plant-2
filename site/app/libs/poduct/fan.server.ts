@@ -22,6 +22,7 @@ export const productFromFAN = async (code: string): Promise<Product | null> => {
       ? Number(new Date(`1970-01-01T${item.volume.padStart(8, "0")}Z`)) / 60000
       : Number(item.volume),
     genres: item.iteminfo.genre?.map(({ name }) => name) ?? [],
+    url: item.URL,
   };
 };
 

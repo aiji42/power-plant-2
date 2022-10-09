@@ -49,7 +49,7 @@ export const productFromMGS = async (code: string): Promise<Product | null> => {
         return { ...res, label: value.childNodes[0].innerText.trim() };
       return res;
     },
-    { imageUrls: [], title: "", code: "", releasedAt: "" }
+    { imageUrls: [], title: "", code: "", releasedAt: "", url: "" }
   );
   if (!info.code) return null;
 
@@ -60,6 +60,7 @@ export const productFromMGS = async (code: string): Promise<Product | null> => {
     .map((img) => img.getAttribute("src"))
     .filter((src): src is string => /\.jpg$/.test(src ?? ""));
   info.sample = root.querySelector("#sample-movie")?.getAttribute("src") ?? "";
+  info.url = url.toString();
 
   return info;
 };
