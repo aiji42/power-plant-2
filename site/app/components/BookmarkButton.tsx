@@ -1,21 +1,11 @@
 import { BiBookmark } from "react-icons/bi";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
-  Button,
-  Icon,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Icon, useDisclosure } from "@chakra-ui/react";
 import { useBookmarkProvider } from "~/components/BookmarkProvider";
-import { useRef } from "react";
+import { Alert } from "~/components/Alert";
 
 export const BookmarkButton = () => {
   const { isBookmarking, handlers } = useBookmarkProvider();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = useRef<any>(null);
 
   return (
     <>
@@ -26,35 +16,16 @@ export const BookmarkButton = () => {
         onClick={isBookmarking ? onOpen : handlers.addBookmark}
       />
 
-      <AlertDialog
+      <Alert
         isOpen={isOpen}
-        leastDestructiveRef={cancelRef}
         onClose={onClose}
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Delete bookmark
-            </AlertDialogHeader>
-
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose}>
-                Cancel
-              </Button>
-              <Button
-                colorScheme="red"
-                onClick={() => {
-                  handlers.deleteBookmark();
-                  onClose();
-                }}
-                ml={3}
-              >
-                Delete
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
+        title="Delete bookmark"
+        commit={() => {
+          handlers.deleteBookmark();
+          onClose();
+        }}
+        commitName="Delete"
+      />
     </>
   );
 };

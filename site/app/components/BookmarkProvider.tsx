@@ -17,6 +17,7 @@ const Context = createContext<
       addDownloadTask: (url: string) => void;
       addBookmark: () => void;
       deleteBookmark: () => void;
+      deleteMedia: (id: string) => void;
     };
     isBookmarking: boolean;
   }
@@ -26,6 +27,7 @@ const Context = createContext<
     addDownloadTask: () => {},
     addBookmark: () => {},
     deleteBookmark: () => {},
+    deleteMedia: () => {},
   },
   isBookmarking: false,
 });
@@ -44,7 +46,19 @@ export const BookmarkProvider = ({
   }, [fetcher.load, action]);
   const addDownloadTask = useCallback(
     (url: string) => {
-      fetcher.submit({ url }, { action, method: "patch" });
+      fetcher.submit(
+        { action: "addDownloadTask", url },
+        { action, method: "patch" }
+      );
+    },
+    [fetcher.submit, action]
+  );
+  const deleteMedia = useCallback(
+    (id: string) => {
+      fetcher.submit(
+        { action: "deleteMedia", id },
+        { action, method: "patch" }
+      );
     },
     [fetcher.submit, action]
   );
@@ -74,7 +88,7 @@ export const BookmarkProvider = ({
     <Context.Provider
       value={{
         bookmark: fetcher.data?.bookmark ?? null,
-        handlers: { addDownloadTask, addBookmark, deleteBookmark },
+        handlers: { addDownloadTask, addBookmark, deleteBookmark, deleteMedia },
         isBookmarking:
           fetcher.submission?.method === "POST"
             ? true

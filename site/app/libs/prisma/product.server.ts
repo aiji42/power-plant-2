@@ -59,10 +59,6 @@ export const createDownloadTask = async (code: string, url: string) => {
   });
 };
 
-export const getDownloadTasks = (code: string) => {
-  return prisma.downloadTask.findMany({
-    where: { product: { code } },
-    orderBy: { createdAt: "desc" },
-    take: 5,
-  });
+export const deleteMedia = async (id: string) => {
+  await prisma.media.delete({ where: { id } });
 };

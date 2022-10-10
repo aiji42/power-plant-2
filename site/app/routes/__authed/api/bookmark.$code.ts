@@ -5,6 +5,7 @@ import {
   createProduct,
   deleteProduct,
   createDownloadTask,
+  deleteMedia,
 } from "~/libs/prisma/product.server";
 
 export const loader = async ({ params }: DataFunctionArgs) => {
@@ -27,9 +28,17 @@ export const action = async ({ params, request }: DataFunctionArgs) => {
     });
   }
   if (request.method === "PATCH") {
-    const url = (await request.formData()).get("url");
-    if (typeof url !== "string") throw new Error("invalid data");
-    await createDownloadTask(code, url);
+    const data = await request.formData();
+    if (data.get("action") === "addDownloadTask") {
+      const url = data.get("url");
+      if (typeof url !== "string") throw new Error("invalid data");
+      await createDownloadTask(code, url);
+    }
+    if (data.get("action") === "deleteMedia") {
+      const id = data.get("id");
+      if (typeof id !== "string") throw new Error("invalid data");
+      await deleteMedia(id);
+    }
   }
 
   return json({

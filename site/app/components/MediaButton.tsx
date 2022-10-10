@@ -19,6 +19,7 @@ import { useBookmarkProvider } from "~/components/BookmarkProvider";
 import humanFormat from "human-format";
 import { Media } from "@prisma/client";
 import { ComponentProps } from "react";
+import { Alert } from "~/components/Alert";
 
 export const MediaButton = ({
   sample,
@@ -75,9 +76,15 @@ type Meta = {
 const Media = ({
   media,
 }: {
-  media: { size: number; meta: Meta; url: string };
+  media: { size: number; meta: Meta; url: string; id: string };
 }) => {
+  const { handlers } = useBookmarkProvider();
+  const alertHandler = useDisclosure();
   const meta = media.meta;
+  const commit = () => {
+    handlers.deleteMedia(media.id);
+    alertHandler.onClose();
+  };
   return (
     <Box my={4}>
       <Flex gap={2}>
@@ -85,7 +92,14 @@ const Media = ({
           <video src={media.url} controls />
         </Box>
         <Center w={16}>
-          <Icon as={BiTrash} boxSize={6} />
+          <Icon as={BiTrash} boxSize={6} onClick={alertHandler.onOpen} />
+          <Alert
+            isOpen={alertHandler.isOpen}
+            onClose={alertHandler.onClose}
+            title="Delete media"
+            commit={commit}
+            commitName="Delete"
+          />
         </Center>
       </Flex>
       <Text w="full" fontSize="xs" mt={1}>
