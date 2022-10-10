@@ -75,7 +75,7 @@ type Meta = {
 const Media = ({
   media,
 }: {
-  media: { size: number; meta: Meta; url: string; id: string };
+  media: { size: string; meta: Meta; url: string; id: string };
 }) => {
   const { handlers } = useBookmarkProvider();
   const alertHandler = useDisclosure();
@@ -102,8 +102,8 @@ const Media = ({
         </Center>
       </Flex>
       <Text w="full" fontSize="xs" mt={1}>
-        {humanFormat(media.size, { unit: "B" })} | {meta.codec} | {meta.width}x
-        {meta.height} | {Math.floor(Number(meta.duration) / 60)}m
+        {humanFormat(Number(media.size), { unit: "B" })} | {meta.codec} |{" "}
+        {meta.width}x{meta.height} | {Math.floor(Number(meta.duration) / 60)}m
       </Text>
     </Box>
   );

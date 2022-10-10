@@ -5,8 +5,8 @@
       "parallelism": "1",
       "taskSpec": {
         "computeResource": {
-          "cpuMilli": "1000",
-          "memoryMib": "512"
+          "cpuMilli": "2000",
+          "memoryMib": "2048"
         },
         "maxRetryCount": 0,
         "maxRunDuration": "3600s",
@@ -25,7 +25,7 @@
     "instances": [
       {
         "policy": {
-          "machineType": "e2-small",
+          "machineType": "e2-medium",
           "provisioningModel": "SPOT"
         }
       }

@@ -42,7 +42,7 @@ model Media {
   url           String
   bucket        String
   key           String
-  size          Int
+  size          String
   meta          Json
   compressTasks CompressTask[]
 

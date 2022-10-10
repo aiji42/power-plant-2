@@ -26,7 +26,7 @@ const scanMetaInfo = async (path: string) => {
   const frameRate = Number(n1) / Number(n2);
 
   return {
-    size: stat.size,
+    size: String(stat.size),
     codec: res.codec_name ?? null,
     width: res.width ?? null,
     height: res.height ?? null,
@@ -91,6 +91,14 @@ const download = async (
   );
 };
 
+const convertToWebm = async (file: string) => {
+  const extname = path.extname(file);
+  const newName = file.replace(new RegExp(extname + "$"), ".webm");
+  await $`ffmpeg -i ${file} ${newName}`;
+
+  return newName;
+};
+
 const uploadToStorage = async (file: string, key: string): Promise<string> => {
   // https://developers.cloudflare.com/r2/data-access/s3-api/api/#implemented-object-level-operations
   await $`aws configure set default.s3.max_concurrent_requests 2`;
@@ -139,7 +147,8 @@ const main = async () => {
       timeout(DOWNLOAD_TIMEOUT),
     ]);
 
-    for (let file of fileNames) {
+    for (let orgFile of fileNames) {
+      const file = await convertToWebm(orgFile);
       const key = `${task.product.code}/${createRandomString(16)}${path.extname(
         file
       )}`;
