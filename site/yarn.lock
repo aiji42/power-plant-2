@@ -2499,6 +2499,11 @@
   resolved "https://registry.yarnpkg.com/@types/http-cache-semantics/-/http-cache-semantics-4.0.1.tgz#0ea7b61496902b95890dc4c3a116b60cb8dae812"
   integrity sha512-SZs7ekbP8CN0txVG2xVRH6EgKmEm31BOxA07vkFaETzZz1xh+cbt8BcI0slpymvwhx5dlFnQG2rTlPVQn+iRPQ==
 
+"@types/human-format@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@types/human-format/-/human-format-1.0.0.tgz#b77d8ef5d9638d066c132ec58628d4a9a6163cef"
+  integrity sha512-EpU2OnpDx0b7F93KuhUnsFyLL60h+PWjXsc6QWNU0gHsSqy6Up+7YRqzMHWVcCYjNbaXqYr2g5vpNwOXyUap+A==
+
 "@types/json-schema@^7.0.6", "@types/json-schema@^7.0.9":
   version "7.0.11"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.11.tgz#d421b6c527a3037f7c84433fd2c4229e016863d3"
@@ -5379,6 +5384,11 @@ http2-wrapper@^1.0.0-beta.5.2:
   dependencies:
     quick-lru "^5.1.1"
     resolve-alpn "^1.0.0"
+
+human-format@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/human-format/-/human-format-1.0.0.tgz#bb5ecc618062581f0442769529c553367507e8fe"
+  integrity sha512-ZfSxF/LHVDb5Un52AguYkZArbiuMbJQwpOpZ0MBuj3pYDmLt7pkCEws9L8xKbgnaKrfMgGd6qc+PHBbKO97AaA==
 
 iconv-lite@0.4.24, iconv-lite@^0.4.24:
   version "0.4.24"

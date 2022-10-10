@@ -1,5 +1,5 @@
 import { useLoaderData } from "@remix-run/react";
-import { useReducer, useRef } from "react";
+import { useReducer } from "react";
 import {
   Box,
   Image,
@@ -14,16 +14,15 @@ import {
 } from "@chakra-ui/react";
 import { loader } from "~/routes/__authed/mgs/show.$code";
 import { BookmarkButton } from "~/components/BookmarkButton";
-import { BiLinkExternal, BiPlayCircle } from "react-icons/bi";
+import { BiLinkExternal } from "react-icons/bi";
 import { DownloadButton } from "~/components/DownloadButton";
 import { Casts } from "~/components/Casts";
 import { BookmarkProvider } from "~/components/BookmarkProvider";
+import { MediaButton } from "~/components/MediaButton";
 
 export const Product = () => {
   const data = useLoaderData<typeof loader>();
   const [showFull, toggle] = useReducer((s) => !s, false);
-
-  const ref = useRef<HTMLVideoElement>(null);
 
   return (
     <BookmarkProvider code={data.product.code}>
@@ -49,23 +48,7 @@ export const Product = () => {
         <Stack my={6} px={4} spacing={6}>
           <Flex>
             <Spacer />
-            {data.product.sample && (
-              <Box>
-                <Icon
-                  as={BiPlayCircle}
-                  boxSize={8}
-                  mr={4}
-                  onClick={() => ref.current?.play()}
-                />
-                <video
-                  ref={ref}
-                  width={0}
-                  height={0}
-                  src={data.product.sample}
-                  controls
-                />
-              </Box>
-            )}
+            <MediaButton sample={data.product.sample} mr={4} />
             <DownloadButton code={data.product.code} mr={4} />
             <BookmarkButton />
           </Flex>
