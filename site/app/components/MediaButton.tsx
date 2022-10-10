@@ -18,7 +18,7 @@ import { FocusLock } from "@chakra-ui/focus-lock";
 import { useBookmarkProvider } from "~/components/BookmarkProvider";
 import humanFormat from "human-format";
 import { Media } from "@prisma/client";
-import { ComponentProps, useRef } from "react";
+import { ComponentProps } from "react";
 
 export const MediaButton = ({
   sample,
@@ -78,44 +78,36 @@ const Media = ({
   media: { size: number; meta: Meta; url: string };
 }) => {
   const meta = media.meta;
-  const ref = useRef<HTMLVideoElement>(null);
-  const onClick = () => {
-    ref.current?.play();
-  };
   return (
-    <Flex my={4} justify="start">
-      <Center w={24}>
-        <video src={media.url} width="100%" ref={ref} controls />
-      </Center>
-      <Text w="full" fontSize="xs" px={2} onClick={onClick}>
+    <Box my={4}>
+      <Flex gap={2}>
+        <Box>
+          <video src={media.url} controls />
+        </Box>
+        <Center w={16}>
+          <Icon as={BiTrash} boxSize={6} />
+        </Center>
+      </Flex>
+      <Text w="full" fontSize="xs" mt={1}>
         {humanFormat(media.size, { unit: "B" })} | {meta.codec} | {meta.width}x
-        {meta.height}
-        <br />
-        {humanFormat(Number(meta.bitRate))}bps |{" "}
-        {Math.floor(Number(meta.duration) / 60)}m |{" "}
-        {Math.floor(meta.frameRate ?? NaN)}fps
+        {meta.height} | {Math.floor(Number(meta.duration) / 60)}m
       </Text>
-      <Center w={6}>
-        <Icon as={BiTrash} boxSize={6} />
-      </Center>
-    </Flex>
+    </Box>
   );
 };
 
 const Sample = ({ sample }: { sample: string }) => {
-  const ref = useRef<HTMLVideoElement>(null);
-  const onClick = () => {
-    ref.current?.play();
-  };
   return (
-    <Flex my={4}>
-      <Center w={24}>
-        <video src={sample} width="100%" ref={ref} controls />
-      </Center>
-      <Text w="full" fontSize="xs" px={2} onClick={onClick}>
+    <Box my={4}>
+      <Flex gap={2}>
+        <Box>
+          <video src={sample} controls />
+        </Box>
+        <Box w={16} />
+      </Flex>
+      <Text w="full" fontSize="xs">
         Sample
       </Text>
-      <Box w={6} />
-    </Flex>
+    </Box>
   );
 };
