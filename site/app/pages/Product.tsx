@@ -108,6 +108,18 @@ export const Product = () => {
           <List spacing={2}>
             <ListItem>
               <Text as={"span"} fontWeight={"bold"}>
+                リリース日:
+              </Text>{" "}
+              {data.product.releasedAt}
+            </ListItem>
+            <ListItem>
+              <Text as={"span"} fontWeight={"bold"}>
+                SKU:
+              </Text>{" "}
+              {data.product.code}
+            </ListItem>
+            <ListItem>
+              <Text as={"span"} fontWeight={"bold"}>
                 メーカー:
               </Text>{" "}
               {data.product.maker}
@@ -141,12 +153,6 @@ export const Product = () => {
                 再生時間:
               </Text>{" "}
               {data.product.length}m
-            </ListItem>
-            <ListItem>
-              <Text as={"span"} fontWeight={"bold"}>
-                リリース日:
-              </Text>{" "}
-              {data.product.releasedAt}
             </ListItem>
           </List>
         </Box>
