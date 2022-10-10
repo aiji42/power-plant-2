@@ -52,10 +52,10 @@ export function ListPage() {
             <Link key={code} to={route("/product/:code", { code })}>
               <GridItem w="100%" minH={48} position="relative">
                 <Image src={src} alt={name} w="full" loading="lazy" />
-                <Text fontSize="3xs" noOfLines={2}>
+                <Text fontSize="2xs" noOfLines={2}>
                   {name}
                 </Text>
-                <Text fontSize="3xs" noOfLines={1} color="teal.200">
+                <Text fontSize="2xs" noOfLines={1} color="teal.200">
                   {casts.join("/")}
                 </Text>
                 {status && (
