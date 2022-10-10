@@ -11,6 +11,7 @@ export const productFromFAN = async (code: string): Promise<Product | null> => {
     imageUrls: [
       item.imageURL.large,
       ...(item.sampleImageURL?.sample_l?.image ?? []),
+      item.imageURL.small,
     ],
     code: item.content_id,
     sample: (await sampleMovie(item.content_id)) ?? undefined,

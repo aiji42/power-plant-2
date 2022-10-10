@@ -3,7 +3,7 @@ import { RouteParams } from "routes-gen";
 import { productFromMGS } from "~/libs/poduct/mgs.server";
 import { cacheHeaders } from "~/libs/cache/cache.server";
 import { productFromFAN } from "~/libs/poduct/fan.server";
-export { Product as default } from "~/pages/Product";
+export { ProductPage as default } from "~/pages/ProductPage";
 
 export const loader = async ({ params }: DataFunctionArgs) => {
   const { code } = params as RouteParams["/product/:code"];

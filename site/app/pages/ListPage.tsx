@@ -51,7 +51,7 @@ export function ListPage() {
           ({ image_path: src, name, sku: code, casts, status }) => (
             <Link key={code} to={route("/product/:code", { code })}>
               <GridItem w="100%" minH={48} position="relative">
-                <Image src={src} alt={name} loading="lazy" />
+                <Image src={src} alt={name} w="full" loading="lazy" />
                 <Text fontSize="3xs" noOfLines={2}>
                   {name}
                 </Text>

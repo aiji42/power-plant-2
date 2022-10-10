@@ -20,7 +20,7 @@ import { Casts } from "~/components/Casts";
 import { BookmarkProvider } from "~/components/BookmarkProvider";
 import { MediaButton } from "~/components/MediaButton";
 
-export const Product = () => {
+export const ProductPage = () => {
   const data = useLoaderData<typeof loader>();
   const [showFull, toggle] = useReducer((s) => !s, false);
 
@@ -119,8 +119,8 @@ export const Product = () => {
           </Box>
         </Stack>
         <Stack spacing={2}>
-          {data.product.imageUrls.map((image) => (
-            <Image src={image} key={image} loading="lazy" />
+          {data.product.imageUrls.map((image, i) => (
+            <Image src={image} key={image + i} loading="lazy" />
           ))}
         </Stack>
       </Box>

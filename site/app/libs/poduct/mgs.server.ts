@@ -59,6 +59,8 @@ export const productFromMGS = async (code: string): Promise<Product | null> => {
     .querySelectorAll(".sample-image-wrap > img")
     .map((img) => img.getAttribute("src"))
     .filter((src): src is string => /\.jpg$/.test(src ?? ""));
+  const forListPageImage = info.imageUrls[0];
+  forListPageImage && info.imageUrls.push(forListPageImage);
   info.sample = root.querySelector("#sample-movie")?.getAttribute("src") ?? "";
   info.url = url.toString();
 
