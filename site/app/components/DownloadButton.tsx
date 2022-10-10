@@ -118,8 +118,8 @@ const LinksPanel = ({ code }: { code: string }) => {
           />
         </Center>
       )}
-      {fetcher.data?.items.map((item) => (
-        <DownloadConfirm key={item.link} item={item}>
+      {fetcher.data?.items.map((item, i) => (
+        <DownloadConfirm key={item.link + i} item={item}>
           <Stat my={4}>
             <StatLabel noOfLines={2}>{item.title}</StatLabel>
             <StatHelpText>
@@ -222,7 +222,7 @@ const DownloadTasksPanel = () => {
   return (
     <>
       {bookmark?.downloadTasks.map((task) => (
-        <Stat my={4}>
+        <Stat my={4} key={task.id}>
           <StatLabel fontSize="lg">
             <Icon as={icon(task.status)} color={color(task.status)} />
             {task.status}
