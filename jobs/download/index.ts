@@ -4,7 +4,7 @@ import { PrismaClient, TaskStatus, DownloadTask } from "@prisma/client";
 
 const prisma = new PrismaClient({ log: ["info", "warn", "error"] });
 
-const MIN_SIZE = 400 * 1024 * 1024; // 400M
+const MIN_SIZE = 200 * 1024 * 1024; // 200M
 const DOWNLOAD_TIMEOUT = 30 * 60 * 1000; // 30min
 const DOWNLOAD_DIR = "/downloads";
 const BUCKET = "power-plant-2";
