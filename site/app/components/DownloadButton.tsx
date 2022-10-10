@@ -39,13 +39,10 @@ import {
   BiCloudDownload,
   BiData,
   BiCalendarAlt,
-  BiPauseCircle,
-  BiPlayCircle,
-  BiCheckCircle,
-  BiErrorCircle,
 } from "react-icons/bi";
 import { FocusLock } from "@chakra-ui/focus-lock";
 import { useBookmarkProvider } from "~/components/BookmarkProvider";
+import { color, icon } from "~/libs/status/utils";
 
 export const DownloadButton = ({
   code,
@@ -245,21 +242,3 @@ const DownloadTasksPanel = () => {
     </>
   );
 };
-
-const color = (status: string) =>
-  status === "Waiting"
-    ? "gray.300"
-    : status === "Running"
-    ? "orange.300"
-    : status === "Completed"
-    ? "teal.300"
-    : "red.300";
-
-const icon = (status: string) =>
-  status === "Waiting"
-    ? BiPauseCircle
-    : status === "Running"
-    ? BiPlayCircle
-    : status === "Completed"
-    ? BiCheckCircle
-    : BiErrorCircle;

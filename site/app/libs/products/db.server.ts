@@ -33,6 +33,11 @@ export const productsFromDB = async (page: number): Promise<ProductList> => {
           name: true,
         },
       },
+      downloadTasks: {
+        take: 1,
+        orderBy: { createdAt: "desc" },
+        select: { status: true },
+      },
     },
   });
 
@@ -41,5 +46,6 @@ export const productsFromDB = async (page: number): Promise<ProductList> => {
     name: p.title,
     image_path: p.imageUrls[0] ?? "",
     casts: p.casts.map(({ name }) => name),
+    status: p.downloadTasks[0]?.status,
   }));
 };
