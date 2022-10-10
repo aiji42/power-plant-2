@@ -85,7 +85,7 @@ const Media = ({
   return (
     <Flex my={4} justify="start">
       <Center w={8}>
-        <Icon as={BiPlayCircle} boxSize={6} onClick={onClick} />
+        <video src={media.url} width="100%" ref={ref} controls />
       </Center>
       <Text w="full" fontSize="xs" px={2} onClick={onClick}>
         {humanFormat(media.size, { unit: "B" })} | {meta.codec} | {meta.width}x
@@ -95,7 +95,6 @@ const Media = ({
         {Math.floor(Number(meta.duration) / 60)}m |{" "}
         {Math.floor(meta.frameRate ?? NaN)}fps
       </Text>
-      <video src={media.url} width={0} height={0} ref={ref} controls />
       <Center w={6}>
         <Icon as={BiTrash} boxSize={6} />
       </Center>
@@ -111,12 +110,11 @@ const Sample = ({ sample }: { sample: string }) => {
   return (
     <Flex my={4}>
       <Center w={8}>
-        <Icon as={BiPlayCircle} boxSize={6} onClick={onClick} />
+        <video src={sample} width="100%" ref={ref} controls />
       </Center>
       <Text w="full" fontSize="xs" px={2} onClick={onClick}>
         Sample
       </Text>
-      <video src={sample} width={0} height={0} ref={ref} controls />
       <Box w={6} />
     </Flex>
   );
