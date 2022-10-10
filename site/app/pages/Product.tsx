@@ -1,5 +1,5 @@
-import { useFetcher, useLoaderData } from "@remix-run/react";
-import { useEffect, useReducer, useRef } from "react";
+import { useLoaderData } from "@remix-run/react";
+import { useReducer, useRef } from "react";
 import {
   Box,
   Image,
@@ -15,8 +15,7 @@ import {
 import { loader } from "~/routes/__authed/mgs/show.$code";
 import { BookmarkButton } from "~/components/BookmarkButton";
 import { BiLinkExternal, BiPlayCircle } from "react-icons/bi";
-import { TorrentPanel } from "~/components/TorrentPanel";
-import { DownloadTasksPanel } from "~/components/DownloadTasksPanel";
+import { DownloadButton } from "~/components/DownloadButton";
 import { Casts } from "~/components/Casts";
 import { BookmarkProvider } from "~/components/BookmarkProvider";
 
@@ -50,7 +49,6 @@ export const Product = () => {
         <Stack my={6} px={4} spacing={6}>
           <Flex>
             <Spacer />
-            <DownloadTasksPanel mr={4} />
             {data.product.sample && (
               <Box>
                 <Icon
@@ -68,7 +66,7 @@ export const Product = () => {
                 />
               </Box>
             )}
-            <TorrentPanel code={data.product.code} mr={4} />
+            <DownloadButton code={data.product.code} mr={4} />
             <BookmarkButton />
           </Flex>
           <Box>
