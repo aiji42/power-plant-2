@@ -56,7 +56,7 @@ export const ProductPage = () => {
             <Text
               as="h1"
               noOfLines={showFull ? undefined : 3}
-              fontSize={"xl"}
+              fontSize={"lg"}
               color="white"
               fontWeight="bold"
               onClick={toggle}
