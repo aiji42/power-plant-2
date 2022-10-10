@@ -36,8 +36,8 @@ export const Casts = ({ code }: { code: string }) => {
       )}
       {castFetcher.type === "done" && castFetcher.data && (
         <Box lineHeight={2.25}>
-          {castFetcher.data.casts.map((c) => (
-            <CastButton key={c.name} {...c} />
+          {castFetcher.data.casts.map((cast) => (
+            <CastButton key={cast.name} cast={cast} />
           ))}
         </Box>
       )}
@@ -45,12 +45,18 @@ export const Casts = ({ code }: { code: string }) => {
   );
 };
 
-const CastButton = ({ name, links }: { name: string; links: string[] }) => {
+const CastButton = ({
+  cast,
+}: {
+  cast: SerializeFrom<typeof castsLoader>["casts"][number];
+}) => {
   const { bookmark, isBookmarking, optimist, handlers } = useBookmarkProvider();
   const { onOpen, onClose, isOpen } = useDisclosure();
-  const connected = !!bookmark?.casts.find((c) => c.name === name);
+  const connectedCast = bookmark?.casts.find(({ name }) => name === cast.name);
   const onClick = () => {
-    connected ? handlers.disconnectCast(name) : handlers.connectCast(name);
+    connectedCast
+      ? handlers.disconnectCast(cast.name)
+      : handlers.connectCast(cast.name);
     onClose();
   };
 
@@ -67,16 +73,23 @@ const CastButton = ({ name, links }: { name: string; links: string[] }) => {
           colorScheme="red"
           borderRadius="full"
           mr={2}
-          variant={connected ? "subtle" : "outline"}
+          variant={connectedCast ? "subtle" : "outline"}
         >
-          <TagLabel>{name}</TagLabel>
+          <TagLabel>
+            {cast.name}
+            {connectedCast
+              ? `(${connectedCast._count.products})`
+              : cast.productCount
+              ? `(${cast.productCount})`
+              : null}
+          </TagLabel>
         </Tag>
       </PopoverTrigger>
       <PopoverContent p={5}>
         <FocusLock persistentFocus={false}>
           <PopoverArrow />
           <Flex gap={5}>
-            {links.map((link, i) => (
+            {cast.links.map((link, i) => (
               <Link
                 href={link}
                 key={link}
@@ -94,7 +107,7 @@ const CastButton = ({ name, links }: { name: string; links: string[] }) => {
               disabled={!isBookmarking || optimist}
               mt={1}
             >
-              {connected ? "Disconnect" : "Connect"}
+              {connectedCast ? "Disconnect" : "Connect"}
             </Button>
           </Flex>
         </FocusLock>

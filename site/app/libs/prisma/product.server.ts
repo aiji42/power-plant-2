@@ -6,7 +6,7 @@ export const getProductData = async (code: string) => {
   return await prisma.product.findUnique({
     where: { code },
     include: {
-      casts: true,
+      casts: { select: { name: true, _count: { select: { products: true } } } },
       downloadTasks: { orderBy: { createdAt: "desc" } },
       medias: true,
     },
@@ -32,11 +32,6 @@ export const createProduct = async (code: string) => {
       label: data.label ?? "",
       series: data.series ?? "",
       url: data.url,
-    },
-    include: {
-      casts: true,
-      downloadTasks: { orderBy: { createdAt: "desc" } },
-      medias: true,
     },
   });
 };
@@ -87,5 +82,11 @@ export const disconnectCast = async (code: string, name: string) => {
         },
       },
     },
+  });
+};
+
+export const countByCast = async (name: string) => {
+  return prisma.product.count({
+    where: { casts: { some: { name } } },
   });
 };

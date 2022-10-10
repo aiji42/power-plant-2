@@ -1,8 +1,10 @@
 import { parse } from "node-html-parser";
+import { countByCast } from "~/libs/prisma/product.server";
 
 type Cast = {
-  link: string;
+  links: string[];
   name: string;
+  productCount: number;
 };
 
 export type Casts = Cast[];
@@ -13,15 +15,19 @@ export const searchCasts = async (s: string): Promise<Casts> => {
     searchCastsFromB(s),
     searchCastsFromC(s),
   ]);
-  return mergeCasts(mergeCasts(castsA, castsB), castsC);
+  const casts = mergeCasts(mergeCasts(castsA, castsB), castsC);
+  return await Promise.all(
+    casts.map(async (name) => ({
+      name,
+      links: searchCastUrls(name).map(String),
+      productCount: await countByCast(name),
+    }))
+  );
 };
 
-const mergeCasts = (casts1: Casts, casts2: Casts): Casts => {
-  const casts1Names = casts1.map(({ name }) => name);
-  return [
-    ...casts1,
-    ...casts2.filter(({ name }) => !casts1Names.includes(name)),
-  ];
+const mergeCasts = (casts1: string[], casts2: string[]): string[] => {
+  const casts1Names = casts1.map((name) => name);
+  return [...casts1, ...casts2.filter((name) => !casts1Names.includes(name))];
 };
 
 export const searchCastUrls = (s: string): [URL, URL, URL] => {
@@ -35,38 +41,31 @@ export const searchCastUrls = (s: string): [URL, URL, URL] => {
   return [urlA, urlB, urlC];
 };
 
-const searchCastsFromA = async (s: string): Promise<Casts> => {
+const searchCastsFromA = async (s: string): Promise<string[]> => {
   const [url] = searchCastUrls(s);
   const res = await fetch(url);
   const html = await res.text();
   const root = parse(html);
-  return root.querySelectorAll("div.actress-name .mlink").map<Cast>((el) => ({
-    link: el.getAttribute("href") ?? "",
-    name: el.innerText,
-  }));
+  return root
+    .querySelectorAll("div.actress-name .mlink")
+    .map<string>((el) => el.innerText);
 };
 
-const searchCastsFromB = async (s: string): Promise<Casts> => {
+const searchCastsFromB = async (s: string): Promise<string[]> => {
   const [, url] = searchCastUrls(s);
   const res = await fetch(url);
   const html = await res.text();
   const root = parse(html);
   return root
     .querySelectorAll(".actress-name a")
-    .map<Cast>((el) => ({
-      link: el.getAttribute("href") ?? "",
-      name: el.innerText,
-    }))
-    .filter(({ name }) => name !== "(≥o≤)");
+    .map<string>((el) => el.innerText)
+    .filter((name) => name !== "(≥o≤)");
 };
 
-const searchCastsFromC = async (s: string): Promise<Casts> => {
+const searchCastsFromC = async (s: string): Promise<string[]> => {
   const [, , url] = searchCastUrls(s);
   const res = await fetch(url);
   const html = await res.text();
   const root = parse(html);
-  return root.querySelectorAll("a.actress").map<Cast>((el) => ({
-    link: el.getAttribute("href") ?? "",
-    name: el.innerText,
-  }));
+  return root.querySelectorAll("a.actress").map<string>((el) => el.innerText);
 };

@@ -20,14 +20,10 @@ export const loader = async ({ params }: DataFunctionArgs) => {
 export const action = async ({ params, request }: DataFunctionArgs) => {
   const { code } = params as RouteParams["/api/bookmark/:code"];
   if (request.method === "POST") {
-    return json({
-      bookmark: await createProduct(code),
-    });
+    await createProduct(code);
   }
   if (request.method === "DELETE") {
-    return json({
-      bookmark: await deleteProduct(code),
-    });
+    await deleteProduct(code);
   }
   if (request.method === "PATCH") {
     const data = await request.formData();
