@@ -89,6 +89,10 @@ const Media = ({
       <Flex gap={2}>
         <Box>
           <video src={media.url} controls />
+          <video
+            src="https://pub-9e03c32adfb94e57bb957c8a923ef7d6.r2.dev/SP-200GANA-2757-qKZrvBwXbFLHkbFf/video.m3u8"
+            controls
+          />
         </Box>
         <Center w={16}>
           <Icon as={BiTrash} boxSize={6} onClick={alertHandler.onOpen} />
