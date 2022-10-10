@@ -84,7 +84,7 @@ const Media = ({
   };
   return (
     <Flex my={4} justify="start">
-      <Center w={8}>
+      <Center w={24}>
         <video src={media.url} width="100%" ref={ref} controls />
       </Center>
       <Text w="full" fontSize="xs" px={2} onClick={onClick}>
@@ -109,7 +109,7 @@ const Sample = ({ sample }: { sample: string }) => {
   };
   return (
     <Flex my={4}>
-      <Center w={8}>
+      <Center w={24}>
         <video src={sample} width="100%" ref={ref} controls />
       </Center>
       <Text w="full" fontSize="xs" px={2} onClick={onClick}>
