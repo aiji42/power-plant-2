@@ -12,7 +12,7 @@ import {
   Spacer,
   Link,
 } from "@chakra-ui/react";
-import { loader } from "~/routes/__authed/mgs/show.$code";
+import { loader } from "~/routes/__authed/product.$code";
 import { BookmarkButton } from "~/components/BookmarkButton";
 import { BiLinkExternal } from "react-icons/bi";
 import { DownloadButton } from "~/components/DownloadButton";
@@ -45,7 +45,7 @@ export const Product = () => {
             <Icon as={BiLinkExternal} boxSize={8} color="teal.200" />
           </Link>
         </Box>
-        <Stack my={6} px={4} spacing={6}>
+        <Stack my={6} px={4} spacing={3}>
           <Flex>
             <Spacer />
             <MediaButton sample={data.product.sample} mr={4} />

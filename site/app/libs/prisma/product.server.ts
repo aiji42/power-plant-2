@@ -62,3 +62,30 @@ export const createDownloadTask = async (code: string, url: string) => {
 export const deleteMedia = async (id: string) => {
   await prisma.media.delete({ where: { id } });
 };
+
+export const connectCast = async (code: string, name: string) => {
+  await prisma.product.update({
+    where: { code },
+    data: {
+      casts: {
+        connectOrCreate: {
+          where: { name },
+          create: { name },
+        },
+      },
+    },
+  });
+};
+
+export const disconnectCast = async (code: string, name: string) => {
+  await prisma.product.update({
+    where: { code },
+    data: {
+      casts: {
+        disconnect: {
+          name,
+        },
+      },
+    },
+  });
+};

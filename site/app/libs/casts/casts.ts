@@ -24,9 +24,19 @@ const mergeCasts = (casts1: Casts, casts2: Casts): Casts => {
   ];
 };
 
+export const searchCastUrls = (s: string): [URL, URL, URL] => {
+  const urlA = new URL(process.env.CAST_SEARCH_ENDPOINT_A!);
+  urlA.searchParams.set("s", s);
+  const urlB = new URL(process.env.CAST_SEARCH_ENDPOINT_B!);
+  urlB.searchParams.set("s", s);
+  const urlC = new URL(process.env.CAST_SEARCH_ENDPOINT_C!);
+  urlC.searchParams.set("s", s);
+
+  return [urlA, urlB, urlC];
+};
+
 const searchCastsFromA = async (s: string): Promise<Casts> => {
-  const url = new URL(process.env.CAST_SEARCH_ENDPOINT_A!);
-  url.searchParams.set("s", s);
+  const [url] = searchCastUrls(s);
   const res = await fetch(url);
   const html = await res.text();
   const root = parse(html);
@@ -37,8 +47,7 @@ const searchCastsFromA = async (s: string): Promise<Casts> => {
 };
 
 const searchCastsFromB = async (s: string): Promise<Casts> => {
-  const url = new URL(process.env.CAST_SEARCH_ENDPOINT_B!);
-  url.searchParams.set("s", s);
+  const [, url] = searchCastUrls(s);
   const res = await fetch(url);
   const html = await res.text();
   const root = parse(html);
@@ -52,8 +61,7 @@ const searchCastsFromB = async (s: string): Promise<Casts> => {
 };
 
 const searchCastsFromC = async (s: string): Promise<Casts> => {
-  const url = new URL(process.env.CAST_SEARCH_ENDPOINT_C!);
-  url.searchParams.set("s", s);
+  const [, , url] = searchCastUrls(s);
   const res = await fetch(url);
   const html = await res.text();
   const root = parse(html);

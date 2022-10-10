@@ -17,7 +17,7 @@ import { BiPlayCircle, BiTrash } from "react-icons/bi";
 import { FocusLock } from "@chakra-ui/focus-lock";
 import { useBookmarkProvider } from "~/components/BookmarkProvider";
 import humanFormat from "human-format";
-import { Media } from "@prisma/client";
+import type { Media } from "@prisma/client";
 import { ComponentProps } from "react";
 import { Alert } from "~/components/Alert";
 

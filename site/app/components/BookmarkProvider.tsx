@@ -18,8 +18,11 @@ const Context = createContext<
       addBookmark: () => void;
       deleteBookmark: () => void;
       deleteMedia: (id: string) => void;
+      connectCast: (name: string) => void;
+      disconnectCast: (name: string) => void;
     };
     isBookmarking: boolean;
+    optimist: boolean;
   }
 >({
   bookmark: null,
@@ -28,8 +31,11 @@ const Context = createContext<
     addBookmark: () => {},
     deleteBookmark: () => {},
     deleteMedia: () => {},
+    connectCast: () => {},
+    disconnectCast: () => {},
   },
   isBookmarking: false,
+  optimist: false,
 });
 
 export const BookmarkProvider = ({
@@ -62,6 +68,24 @@ export const BookmarkProvider = ({
     },
     [fetcher.submit, action]
   );
+  const connectCast = useCallback(
+    (name: string) => {
+      fetcher.submit(
+        { action: "connectCast", name },
+        { action, method: "patch" }
+      );
+    },
+    [fetcher.submit, action]
+  );
+  const disconnectCast = useCallback(
+    (name: string) => {
+      fetcher.submit(
+        { action: "disconnectCast", name },
+        { action, method: "patch" }
+      );
+    },
+    [fetcher.submit, action]
+  );
   const addBookmark = useCallback(() => {
     fetcher.submit({}, { action, method: "post" });
   }, [fetcher.submit, action]);
@@ -88,13 +112,21 @@ export const BookmarkProvider = ({
     <Context.Provider
       value={{
         bookmark: fetcher.data?.bookmark ?? null,
-        handlers: { addDownloadTask, addBookmark, deleteBookmark, deleteMedia },
+        handlers: {
+          addDownloadTask,
+          addBookmark,
+          deleteBookmark,
+          deleteMedia,
+          connectCast,
+          disconnectCast,
+        },
         isBookmarking:
           fetcher.submission?.method === "POST"
             ? true
             : fetcher.submission?.method === "DELETE"
             ? false
             : !!fetcher.data?.bookmark,
+        optimist: fetcher.state !== "idle",
       }}
     >
       {children}

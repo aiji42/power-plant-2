@@ -6,6 +6,8 @@ import {
   deleteProduct,
   createDownloadTask,
   deleteMedia,
+  connectCast,
+  disconnectCast,
 } from "~/libs/prisma/product.server";
 
 export const loader = async ({ params }: DataFunctionArgs) => {
@@ -38,6 +40,16 @@ export const action = async ({ params, request }: DataFunctionArgs) => {
       const id = data.get("id");
       if (typeof id !== "string") throw new Error("invalid data");
       await deleteMedia(id);
+    }
+    if (data.get("action") === "connectCast") {
+      const name = data.get("name");
+      if (typeof name !== "string") throw new Error("invalid data");
+      await connectCast(code, name);
+    }
+    if (data.get("action") === "disconnectCast") {
+      const name = data.get("name");
+      if (typeof name !== "string") throw new Error("invalid data");
+      await disconnectCast(code, name);
     }
   }
 
