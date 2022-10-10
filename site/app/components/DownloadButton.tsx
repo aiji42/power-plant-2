@@ -223,8 +223,8 @@ const DownloadTasksPanel = () => {
     <>
       {bookmark?.downloadTasks.map((task) => (
         <Stat my={4} key={task.id}>
-          <StatLabel fontSize="lg">
-            <Icon as={icon(task.status)} color={color(task.status)} />
+          <StatLabel>
+            <Icon as={icon(task.status)} color={color(task.status)} mr={1} />
             {task.status}
           </StatLabel>
           <StatHelpText>

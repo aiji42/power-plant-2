@@ -27,7 +27,7 @@ export function ListPage() {
   return (
     <Box w="100%" p={2} {...handler}>
       <Flex mx={4} my={4}>
-        {(["mgs", "fana", "fanc"] as const).map((c) => (
+        {(["mgs", "fana", "fanc", "stock"] as const).map((c) => (
           <ChakraLink
             key={c}
             as={Link}
@@ -44,16 +44,7 @@ export function ListPage() {
       </Flex>
       <Grid templateColumns="repeat(3, 1fr)" gap={2}>
         {data.items.map(({ image_path: src, name, sku: code, casts }) => (
-          <Link
-            key={code}
-            to={
-              location.pathname.startsWith("/mgs")
-                ? route("/mgs/show/:code", { code })
-                : location.pathname.startsWith("/fana")
-                ? route("/fana/show/:code", { code })
-                : route("/fanc/show/:code", { code })
-            }
-          >
+          <Link key={code} to={route("/product/:code", { code })}>
             <GridItem w="100%" minH={48}>
               <img src={src} alt={name} loading="lazy" />
               <Text fontSize="3xs" noOfLines={2}>
