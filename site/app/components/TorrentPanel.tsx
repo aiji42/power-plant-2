@@ -34,7 +34,7 @@ import {
   BiCalendarAlt,
 } from "react-icons/bi";
 import { FocusLock } from "@chakra-ui/focus-lock";
-import { loader as bookmarkLoader } from "~/routes/__authed/api/bookmark.$code";
+import { useBookmarkProvider } from "~/components/BookmarkProvider";
 
 export const TorrentPanel = ({
   code,
@@ -47,11 +47,6 @@ export const TorrentPanel = ({
       torrentFetcher.type === "init" &&
       torrentFetcher.load(route("/api/torrent/:code", { code }));
   }, [torrentFetcher, code, isOpen]);
-
-  const bookmarkFetcher = useFetcher<SerializeFrom<typeof bookmarkLoader>>();
-  useEffect(() => {
-    isOpen && bookmarkFetcher.load(route("/api/bookmark/:code", { code }));
-  }, [code, bookmarkFetcher.load, isOpen]);
 
   return (
     <Popover
@@ -80,12 +75,7 @@ export const TorrentPanel = ({
             </Center>
           )}
           {torrentFetcher.data?.items.map((item) => (
-            <DownloadConfirm
-              key={item.link}
-              item={item}
-              code={code}
-              isActive={!!bookmarkFetcher.data?.isBookmarked}
-            >
+            <DownloadConfirm key={item.link} item={item}>
               <Stat my={4}>
                 <StatLabel noOfLines={2}>{item.title}</StatLabel>
                 <StatHelpText>
@@ -115,24 +105,18 @@ export const TorrentPanel = ({
 
 const DownloadConfirm = ({
   children,
-  code,
-  isActive,
   item,
 }: {
   children: ReactNode;
-  code: string;
-  isActive: boolean;
   item: SerializeFrom<typeof torrentLoader>["items"][number];
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef<any>(null);
 
-  const fetcher = useFetcher();
+  const { isBookmarking, handlers } = useBookmarkProvider();
+
   const submit = () => {
-    fetcher.submit(
-      { url: item.link },
-      { action: route("/api/download-task/:code", { code }), method: "post" }
-    );
+    handlers.addDownloadTask(item.link);
     onClose();
   };
 
@@ -148,10 +132,10 @@ const DownloadConfirm = ({
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              {isActive ? "Download Confirm" : "Please bookmark it first"}
+              {isBookmarking ? "Download Confirm" : "Please bookmark it first"}
             </AlertDialogHeader>
 
-            {isActive && (
+            {isBookmarking && (
               <AlertDialogBody>
                 <Stat>
                   <StatLabel>{item.title}</StatLabel>
@@ -180,7 +164,7 @@ const DownloadConfirm = ({
                 colorScheme="teal"
                 onClick={submit}
                 ml={3}
-                disabled={!isActive}
+                disabled={!isBookmarking}
               >
                 OK
               </Button>

@@ -14,11 +14,6 @@ import {
   Avatar,
   AvatarBadge,
 } from "@chakra-ui/react";
-import { useFetcher } from "@remix-run/react";
-import { SerializeFrom } from "@remix-run/node";
-import { loader as downloadTaskLoader } from "~/routes/__authed/api/download-task.$code";
-import { useEffect } from "react";
-import { route } from "routes-gen";
 import {
   BiTask,
   BiPauseCircle,
@@ -27,22 +22,12 @@ import {
   BiErrorCircle,
 } from "react-icons/bi";
 import { FocusLock } from "@chakra-ui/focus-lock";
-import { clearInterval } from "timers";
+import { useBookmarkProvider } from "~/components/BookmarkProvider";
 
-export const DownloadTasksPanel = ({
-  code,
-  ...props
-}: { code: string } & BoxProps) => {
+export const DownloadTasksPanel = ({ ...props }: BoxProps) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
-  const fetcher = useFetcher<SerializeFrom<typeof downloadTaskLoader>>();
-  useEffect(() => {
-    fetcher.load(route("/api/download-task/:code", { code }));
-    const id = setInterval(
-      () => fetcher.load(route("/api/download-task/:code", { code })),
-      10000
-    );
-    return () => clearInterval(id);
-  }, [fetcher.load, code]);
+  const { bookmark } = useBookmarkProvider();
+  const [lastTask] = bookmark?.downloadTasks ?? [];
 
   return (
     <Popover
@@ -58,8 +43,8 @@ export const DownloadTasksPanel = ({
             icon={<Icon as={BiTask} boxSize={8} color="white" />}
             backgroundColor="transparent"
           >
-            {fetcher.data?.status && (
-              <AvatarBadge boxSize="1em" bg={color(fetcher.data.status)} />
+            {lastTask && (
+              <AvatarBadge boxSize="1em" bg={color(lastTask.status)} />
             )}
           </Avatar>
         </Box>
@@ -67,7 +52,7 @@ export const DownloadTasksPanel = ({
       <PopoverContent p={5}>
         <FocusLock persistentFocus={false}>
           <PopoverArrow />
-          {fetcher.data?.tasks.map((task) => (
+          {bookmark?.downloadTasks.map((task) => (
             <Stat my={4}>
               <StatLabel fontSize="lg">
                 <Icon as={icon(task.status)} color={color(task.status)} />
@@ -87,9 +72,7 @@ export const DownloadTasksPanel = ({
               </StatHelpText>
             </Stat>
           ))}
-          {fetcher.data && fetcher.data.tasks.length < 1 && (
-            <Text>No tasks</Text>
-          )}
+          {(bookmark?.downloadTasks ?? []).length < 1 && <Text>No tasks</Text>}
         </FocusLock>
       </PopoverContent>
     </Popover>

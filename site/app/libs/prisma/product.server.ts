@@ -2,16 +2,18 @@ import { prisma } from "~/libs/prisma/client.server";
 import { productFromMGS } from "~/libs/poduct/mgs.server";
 import { productFromFAN } from "~/libs/poduct/fan.server";
 
-export const isExisting = async (code: string) => {
-  return !!(await prisma.product.findUnique({ where: { code } }));
+export const getProductData = async (code: string) => {
+  return await prisma.product.findUnique({
+    where: { code },
+    include: {
+      casts: true,
+      downloadTasks: { orderBy: { createdAt: "desc" } },
+      medias: true,
+    },
+  });
 };
 
-export const createOrDelete = async (code: string) => {
-  if (await isExisting(code)) {
-    await prisma.product.delete({ where: { code } });
-    return null;
-  }
-
+export const createProduct = async (code: string) => {
   const [mgs, fan] = await Promise.all([
     productFromMGS(code),
     productFromFAN(code),
@@ -31,7 +33,17 @@ export const createOrDelete = async (code: string) => {
       series: data.series ?? "",
       url: data.url,
     },
+    include: {
+      casts: true,
+      downloadTasks: { orderBy: { createdAt: "desc" } },
+      medias: true,
+    },
   });
+};
+
+export const deleteProduct = async (code: string) => {
+  await prisma.product.delete({ where: { code } });
+  return null;
 };
 
 export const createDownloadTask = async (code: string, url: string) => {
