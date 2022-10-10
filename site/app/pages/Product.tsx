@@ -7,30 +7,21 @@ import {
   ListItem,
   Stack,
   Text,
-  Skeleton,
-  Tag,
-  TagLabel,
   Flex,
   Icon,
   Spacer,
   Link,
 } from "@chakra-ui/react";
 import { loader } from "~/routes/__authed/mgs/show.$code";
-import { loader as castsLoader } from "~/routes/__authed/api/casts.$code";
-import { route } from "routes-gen";
-import { SerializeFrom } from "@remix-run/node";
 import { BookmarkButton } from "~/components/BookmarkButton";
 import { BiLinkExternal, BiPlayCircle } from "react-icons/bi";
 import { TorrentPanel } from "~/components/TorrentPanel";
 import { DownloadTasksPanel } from "~/components/DownloadTasksPanel";
+import { Casts } from "~/components/Casts/Casts";
 
 export const Product = () => {
   const data = useLoaderData<typeof loader>();
   const [showFull, toggle] = useReducer((s) => !s, false);
-  const castFetcher = useFetcher<SerializeFrom<typeof castsLoader>>();
-  useEffect(() => {
-    castFetcher.load(route("/api/casts/:code", { code: data.product.code }));
-  }, [castFetcher.load, data.product.code]);
 
   const ref = useRef<HTMLVideoElement>(null);
 
@@ -86,24 +77,7 @@ export const Product = () => {
             {data.product.title}
           </Text>
         </Box>
-        {castFetcher.type !== "done" && (
-          <Skeleton borderRadius="full" height={8} />
-        )}
-        {castFetcher.type === "done" && castFetcher.data && (
-          <Box lineHeight={2.25}>
-            {castFetcher.data.casts.map((c) => (
-              <Tag
-                key={c.name}
-                size="lg"
-                colorScheme="red"
-                borderRadius="full"
-                mr={2}
-              >
-                <TagLabel>{c.name}</TagLabel>
-              </Tag>
-            ))}
-          </Box>
-        )}
+        <Casts code={data.product.code} />
         <Box>
           <List spacing={2}>
             <ListItem>
