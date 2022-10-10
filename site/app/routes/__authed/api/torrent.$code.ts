@@ -6,9 +6,11 @@ import { searchLinks } from "~/libs/torrent/searchLinks";
 
 export const loader = async ({ params }: DataFunctionArgs) => {
   const { code } = params as RouteParams["/api/torrent/:code"];
-  const items = (
-    await Promise.all(formatter(code).map((c) => searchLinks(c)))
-  ).flat();
+  const items = (await Promise.all(formatter(code).map((c) => searchLinks(c))))
+    .flat()
+    .sort(({ completed: a }, { completed: b }) =>
+      Number(a) > Number(b) ? -1 : 1
+    );
   return json(
     {
       items,

@@ -33,3 +33,24 @@ export const createOrDelete = async (code: string) => {
     },
   });
 };
+
+export const createDownloadTask = async (code: string, url: string) => {
+  await prisma.product.update({
+    where: { code },
+    data: {
+      downloadTasks: {
+        create: {
+          targetUrl: url,
+        },
+      },
+    },
+  });
+};
+
+export const getDownloadTasks = (code: string) => {
+  return prisma.downloadTask.findMany({
+    where: { product: { code } },
+    orderBy: { createdAt: "desc" },
+    take: 5,
+  });
+};

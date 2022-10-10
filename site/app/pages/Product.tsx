@@ -22,6 +22,7 @@ import { SerializeFrom } from "@remix-run/node";
 import { BookmarkButton } from "~/components/BookmarkButton";
 import { BiLinkExternal, BiPlayCircle } from "react-icons/bi";
 import { TorrentPanel } from "~/components/TorrentPanel";
+import { DownloadTasksPanel } from "~/components/DownloadTasksPanel";
 
 export const Product = () => {
   const data = useLoaderData<typeof loader>();
@@ -51,6 +52,8 @@ export const Product = () => {
       </Box>
       <Stack my={6} px={4} spacing={6}>
         <Flex>
+          <Spacer />
+          <DownloadTasksPanel code={data.product.code} mr={4} />
           {data.product.sample && (
             <Box>
               <Icon
@@ -68,7 +71,6 @@ export const Product = () => {
               />
             </Box>
           )}
-          <Spacer />
           <TorrentPanel code={data.product.code} mr={4} />
           <BookmarkButton code={data.product.code} />
         </Flex>
