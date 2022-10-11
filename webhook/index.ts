@@ -67,11 +67,11 @@ app.post("/media", async (request, reply) => {
       })
     );
 
-    for (let key in res.Contents) {
+    for (let content of res.Contents) {
       await S3.send(
         new DeleteObjectCommand({
           Bucket: data.old_record.bucket,
-          Key: key,
+          Key: content.Key,
         })
       );
     }
