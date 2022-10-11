@@ -16,12 +16,16 @@ import {
   Text,
   Icon,
   Image,
+  Input,
+  Spacer,
 } from "@chakra-ui/react";
 import { FaCircle } from "react-icons/fa";
+import { GrStackOverflow } from "react-icons/gr";
 import { route } from "routes-gen";
 import { useSwipeToNext } from "~/hooks/useSwipeToNext";
 import { loader } from "~/routes/__authed/stock.$page";
 import { color } from "~/libs/status/utils";
+import { Fragment } from "react";
 
 export function ListPage() {
   const data = useLoaderData<typeof loader>();
@@ -30,22 +34,51 @@ export function ListPage() {
 
   return (
     <Box w="100%" p={2} {...handler}>
-      <Flex mx={4} my={4}>
-        {(["mgs", "fana", "fanc", "stock"] as const).map((c) => (
-          <ChakraLink
-            key={c}
-            as={Link}
-            to={route(`/${c}/:page`, { page: "1" })}
-            fontSize="xl"
-            mr={4}
-            color={
-              location.pathname.startsWith(`/${c}`) ? "teal.300" : "gray.300"
-            }
-          >
-            {c.toUpperCase()}
-          </ChakraLink>
-        ))}
-      </Flex>
+      <Box
+        boxShadow="dark-lg"
+        m={1}
+        mb={4}
+        p={4}
+        top={1}
+        position="sticky"
+        rounded="md"
+        bgColor="gray.900"
+        zIndex={10}
+      >
+        <Flex justify="space-between">
+          <Input w={40} rounded="3xl" bg="gray.200" />
+          <Spacer />
+          {(["mgs", "fana", "fanc"] as const).map((c) => (
+            <Fragment key={c}>
+              <Center>
+                <ChakraLink
+                  as={Link}
+                  to={route(`/${c}/:page`, { page: "1" })}
+                  color={
+                    location.pathname.startsWith(`/${c}`)
+                      ? "teal.300"
+                      : "gray.300"
+                  }
+                >
+                  {c}
+                </ChakraLink>
+              </Center>
+              <Spacer />
+            </Fragment>
+          ))}
+          <Center>
+            <ChakraLink
+              as={Link}
+              to={route("/stock/:page", { page: "1" })}
+              color={
+                location.pathname.startsWith("/stock") ? "teal.300" : "gray.300"
+              }
+            >
+              <Icon mt={2} as={GrStackOverflow} />
+            </ChakraLink>
+          </Center>
+        </Flex>
+      </Box>
       <Grid templateColumns="repeat(3, 1fr)" gap={2}>
         {data.items.map(
           ({ image_path: src, name, sku: code, casts, status }) => (
@@ -66,6 +99,7 @@ export function ListPage() {
                     right={1}
                     position="absolute"
                     fontSize="md"
+                    boxShadow="base"
                   />
                 )}
               </GridItem>
