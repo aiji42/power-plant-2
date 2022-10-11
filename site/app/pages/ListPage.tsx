@@ -33,7 +33,7 @@ export function ListPage() {
   const { handler, swiping } = useSwipeToNext(data.nextTo);
 
   return (
-    <Box w="100%" p={2} {...handler}>
+    <Box p={2} {...handler}>
       <Box
         boxShadow="dark-lg"
         m={1}
@@ -46,7 +46,7 @@ export function ListPage() {
         zIndex={10}
       >
         <Flex justify="space-between">
-          <Input w={40} rounded="3xl" bg="gray.200" />
+          <Input w={32} rounded="3xl" bg="gray.200" />
           <Spacer />
           {(["mgs", "fana", "fanc"] as const).map((c) => (
             <Fragment key={c}>

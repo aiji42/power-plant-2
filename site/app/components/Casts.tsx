@@ -1,7 +1,7 @@
 import { useFetcher } from "@remix-run/react";
 import { SerializeFrom } from "@remix-run/node";
 import { loader as castsLoader } from "~/routes/__authed/api/casts.$code";
-import { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import { route } from "routes-gen";
 import {
   Box,
@@ -90,18 +90,19 @@ const CastButton = ({
           <PopoverArrow />
           <Flex gap={5}>
             {cast.links.map((link, i) => (
-              <Link
-                href={link}
-                key={link}
-                display="block"
-                fontSize="2xl"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Icon as={[FaSnowman, FaVial, FaPizzaSlice][i]} />
-              </Link>
+              <Fragment key={link}>
+                <Link
+                  href={link}
+                  display="block"
+                  fontSize="2xl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Icon as={[FaSnowman, FaVial, FaPizzaSlice][i]} />
+                </Link>{" "}
+                <Spacer />
+              </Fragment>
             ))}
-            <Spacer />
             <Button
               onClick={onClick}
               disabled={!isBookmarking || optimist}

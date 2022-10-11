@@ -26,7 +26,7 @@ export const ProductPage = () => {
 
   return (
     <BookmarkProvider code={data.product.code}>
-      <Box w="full" p={2} position="relative">
+      <Box w="full" p={2}>
         <Image
           rounded={"md"}
           src={data.product.imageUrls[0]}
@@ -36,17 +36,15 @@ export const ProductPage = () => {
           h="320px"
           objectPosition={"right top"}
         />
-        <Box position="absolute" top={6} right={6}>
-          <Link
-            href={data.product.url}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Icon as={BiLinkExternal} boxSize={8} color="teal.200" />
-          </Link>
-        </Box>
         <Stack my={6} px={4} spacing={3}>
           <Flex>
+            <Link
+              href={data.product.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Icon as={BiLinkExternal} boxSize={8} />
+            </Link>
             <Spacer />
             <MediaButton sample={data.product.sample} mr={4} />
             <DownloadButton code={data.product.code} mr={4} />
