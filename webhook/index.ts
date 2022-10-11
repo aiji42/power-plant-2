@@ -1,6 +1,11 @@
 import fastify from "fastify";
 import { $ } from "zx";
-import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  DeleteObjectCommand,
+  ListObjectsV2Command,
+} from "@aws-sdk/client-s3";
+import * as path from "path";
 
 const S3 = new S3Client({
   region: "auto",
@@ -55,12 +60,21 @@ app.post("/media", async (request, reply) => {
     }
   >;
   if (data.type === "DELETE" && data.table === "Media") {
-    await S3.send(
-      new DeleteObjectCommand({
+    const res = await S3.send(
+      new ListObjectsV2Command({
         Bucket: data.old_record.bucket,
-        Key: data.old_record.key,
+        Prefix: `${path.dirname(data.old_record.key)}/`,
       })
     );
+
+    for (let key in res.Contents) {
+      await S3.send(
+        new DeleteObjectCommand({
+          Bucket: data.old_record.bucket,
+          Key: key,
+        })
+      );
+    }
     reply.code(200).send({ message: `deleted media ${data.old_record.url}` });
   }
 });

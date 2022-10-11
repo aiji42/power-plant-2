@@ -91,29 +91,32 @@ const download = async (
   );
 };
 
-const convertToWebm = async (file: string) => {
-  const extname = path.extname(file);
-  const newName = file.replace(new RegExp(extname + "$"), ".webm");
-  await $`ffmpeg -i ${file} ${newName}`;
+const convertToHLS = async (file: string, prefix: string): Promise<string> => {
+  await $`mkdir ${prefix}`;
 
-  return newName;
+  const movedFile = `${prefix}/video${path.extname(file)}}`;
+  await $`mv ${file} ${movedFile}`;
+
+  await $`ffmpeg -i ${movedFile} -c:v copy -c:a copy -f hls -hls_time 60 -hls_playlist_type vod -hls_segment_filename "${prefix}/video%4d.ts" ${prefix}/video.m3u8`;
+
+  await $`rm -f ${movedFile}`;
+
+  return `${prefix}/video.m3u8`;
 };
 
-const uploadToStorage = async (file: string, key: string): Promise<string> => {
+const uploadToStorage = async (prefix: string) => {
   // https://developers.cloudflare.com/r2/data-access/s3-api/api/#implemented-object-level-operations
   await $`aws configure set default.s3.max_concurrent_requests 2`;
-  await $`aws s3 cp --endpoint-url https://${process.env.R2_CLIENT_ID}.r2.cloudflarestorage.com ${file} s3://${BUCKET}/${key}`;
-  return `${process.env.R2_PUBLIC_URL}/${key}`;
+  await $`aws s3 sync --endpoint-url https://${process.env.R2_CLIENT_ID}.r2.cloudflarestorage.com ${prefix} s3://${BUCKET}/${prefix}`;
 };
 
 const saveDbAsMedia = async (
-  filePath: string,
   url: string,
   key: string,
+  size: string,
+  meta: Record<string, string | number>,
   job: DownloadTask
 ) => {
-  const { size, ...meta } = await scanMetaInfo(filePath);
-
   await prisma.media.create({
     data: {
       product: {
@@ -148,12 +151,17 @@ const main = async () => {
     ]);
 
     for (let orgFile of fileNames) {
-      const file = await convertToWebm(orgFile);
-      const key = `${task.product.code}/${createRandomString(16)}${path.extname(
-        file
-      )}`;
-      const url = await uploadToStorage(file, key);
-      await saveDbAsMedia(file, url, key, task);
+      const { size, ...meta } = await scanMetaInfo(orgFile);
+      const dir = `${task.product.code}-${createRandomString(16)}`;
+      const key = await convertToHLS(orgFile, dir);
+      await uploadToStorage(dir);
+      await saveDbAsMedia(
+        `${process.env.R2_PUBLIC_URL}/${key}`,
+        key,
+        size,
+        meta,
+        task
+      );
     }
     await complete(task.id);
   } catch (e) {
