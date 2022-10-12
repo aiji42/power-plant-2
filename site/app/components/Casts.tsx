@@ -85,7 +85,7 @@ const CastButton = ({
           </TagLabel>
         </Tag>
       </PopoverTrigger>
-      <PopoverContent p={5}>
+      <PopoverContent p={4}>
         <FocusLock persistentFocus={false}>
           <PopoverArrow />
           <Flex gap={5}>

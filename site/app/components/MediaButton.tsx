@@ -47,7 +47,7 @@ export const MediaButton = ({
           </Avatar>
         </Box>
       </PopoverTrigger>
-      <PopoverContent p={5}>
+      <PopoverContent p={2}>
         <FocusLock persistentFocus={false}>
           <PopoverArrow />
           {bookmark?.medias.map((media) => (

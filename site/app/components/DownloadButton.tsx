@@ -13,12 +13,7 @@ import {
   StatHelpText,
   StatLabel,
   useDisclosure,
-  AlertDialog,
   AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
   Button,
   Text,
   Tabs,
@@ -28,11 +23,19 @@ import {
   TabPanel,
   AvatarBadge,
   Avatar,
+  Flex,
+  Input,
 } from "@chakra-ui/react";
 import { useFetcher } from "@remix-run/react";
 import { SerializeFrom } from "@remix-run/node";
 import { loader as torrentLoader } from "~/routes/__authed/api/torrent.$code";
-import { ReactNode, useEffect, useRef } from "react";
+import {
+  ChangeEvent,
+  cloneElement,
+  ReactElement,
+  useEffect,
+  useReducer,
+} from "react";
 import { route } from "routes-gen";
 import {
   BiCheck,
@@ -43,6 +46,7 @@ import {
 import { FocusLock } from "@chakra-ui/focus-lock";
 import { useBookmarkProvider } from "~/components/BookmarkProvider";
 import { color, icon } from "~/libs/status/utils";
+import { Alert } from "~/components/Alert";
 
 export const DownloadButton = ({
   code,
@@ -72,13 +76,14 @@ export const DownloadButton = ({
           </Avatar>
         </Box>
       </PopoverTrigger>
-      <PopoverContent p={5}>
+      <PopoverContent p={2}>
         <FocusLock persistentFocus={false}>
           <PopoverArrow />
           <Tabs>
             <TabList>
               <Tab>Tasks</Tab>
               <Tab>Links</Tab>
+              <Tab>Manual</Tab>
             </TabList>
 
             <TabPanels>
@@ -87,6 +92,9 @@ export const DownloadButton = ({
               </TabPanel>
               <TabPanel>
                 <LinksPanel code={code} />
+              </TabPanel>
+              <TabPanel>
+                <ManualLinkPanel />
               </TabPanel>
             </TabPanels>
           </Tabs>
@@ -140,79 +148,6 @@ const LinksPanel = ({ code }: { code: string }) => {
   );
 };
 
-const DownloadConfirm = ({
-  children,
-  item,
-}: {
-  children: ReactNode;
-  item: SerializeFrom<typeof torrentLoader>["items"][number];
-}) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = useRef<any>(null);
-
-  const { isBookmarking, handlers } = useBookmarkProvider();
-
-  const submit = () => {
-    handlers.addDownloadTask(item.link);
-    onClose();
-  };
-
-  return (
-    <>
-      <Box onClick={onOpen}>{children}</Box>
-
-      <AlertDialog
-        isOpen={isOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={onClose}
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              {isBookmarking ? "Download Confirm" : "Please bookmark it first"}
-            </AlertDialogHeader>
-
-            {isBookmarking && (
-              <AlertDialogBody>
-                <Stat>
-                  <StatLabel>{item.title}</StatLabel>
-                  <StatHelpText>
-                    <Icon as={BiCalendarAlt} />
-                    {item.registeredAt.slice(0, 10)}
-                    <br />
-                    <Icon as={BiData} />
-                    {item.size}
-                    <StatArrow type="increase" ml={2} />
-                    {item.seeder}
-                    <StatArrow type="decrease" ml={2} />
-                    {item.leech}
-                    <Icon as={BiCheck} ml={2} />
-                    {item.completed}
-                  </StatHelpText>
-                </Stat>
-              </AlertDialogBody>
-            )}
-
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose}>
-                Cancel
-              </Button>
-              <Button
-                colorScheme="teal"
-                onClick={submit}
-                ml={3}
-                disabled={!isBookmarking}
-              >
-                OK
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
-    </>
-  );
-};
-
 const DownloadTasksPanel = () => {
   const { bookmark } = useBookmarkProvider();
 
@@ -239,6 +174,67 @@ const DownloadTasksPanel = () => {
         </Stat>
       ))}
       {(bookmark?.downloadTasks ?? []).length < 1 && <Text>No tasks</Text>}
+    </>
+  );
+};
+
+const ManualLinkPanel = () => {
+  const [value, onChange] = useReducer(
+    (s: string, e: ChangeEvent<HTMLInputElement>) => e.target.value,
+    ""
+  );
+  return (
+    <Flex gap={1}>
+      <Input onChange={onChange} placeholder="Input custom link url" />
+      <DownloadConfirm item={{ title: "Custom link", link: value }}>
+        <Button disabled={!value} colorScheme="teal">
+          Submit
+        </Button>
+      </DownloadConfirm>
+    </Flex>
+  );
+};
+
+const DownloadConfirm = ({
+  children,
+  item,
+}: {
+  children: ReactElement;
+  item: Pick<
+    SerializeFrom<typeof torrentLoader>["items"][number],
+    "link" | "title"
+  >;
+}) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isBookmarking, handlers } = useBookmarkProvider();
+
+  const submit = () => {
+    isBookmarking && handlers.addDownloadTask(item.link);
+    onClose();
+  };
+
+  const Trigger = cloneElement(children, { onClick: onOpen });
+
+  return (
+    <>
+      {Trigger}
+      <Alert
+        isOpen={isOpen}
+        onClose={onClose}
+        title={isBookmarking ? "Download Confirm" : "Please bookmark it first"}
+        commit={submit}
+        commitName="OK"
+        commitColorScheme="teal"
+      >
+        {isBookmarking && (
+          <AlertDialogBody>
+            <Stat>
+              <StatLabel noOfLines={3}>{item.title}</StatLabel>
+              <StatHelpText>{item.link}</StatHelpText>
+            </Stat>
+          </AlertDialogBody>
+        )}
+      </Alert>
     </>
   );
 };

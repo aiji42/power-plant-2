@@ -4,9 +4,11 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogOverlay,
+  AlertDialogBody,
   Button,
+  ButtonProps,
 } from "@chakra-ui/react";
-import { useRef } from "react";
+import { ReactNode, useRef } from "react";
 
 export const Alert = ({
   isOpen,
@@ -14,12 +16,16 @@ export const Alert = ({
   title,
   commit,
   commitName,
+  commitColorScheme = "red",
+  children = null,
 }: {
   isOpen: boolean;
   onClose: VoidFunction;
   title: string;
   commit: VoidFunction;
   commitName: string;
+  commitColorScheme?: ButtonProps["colorScheme"];
+  children?: ReactNode;
 }) => {
   const cancelRef = useRef<any>(null);
 
@@ -34,12 +40,12 @@ export const Alert = ({
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
             {title}
           </AlertDialogHeader>
-
+          {children && <AlertDialogBody>{children}</AlertDialogBody>}
           <AlertDialogFooter>
             <Button ref={cancelRef} onClick={onClose}>
               Cancel
             </Button>
-            <Button colorScheme="red" onClick={commit} ml={3}>
+            <Button colorScheme={commitColorScheme} onClick={commit} ml={3}>
               {commitName}
             </Button>
           </AlertDialogFooter>
