@@ -10,14 +10,25 @@ import {
   AvatarBadge,
   Avatar,
   Flex,
-  Center,
   Text,
+  IconButton,
+  Spacer,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
-import { BiPlayCircle, BiTrash } from "react-icons/bi";
+import {
+  BiPlayCircle,
+  BiTrash,
+  BiPlay,
+  BiDotsHorizontalRounded,
+} from "react-icons/bi";
+import { FaCompressArrowsAlt } from "react-icons/fa";
 import { FocusLock } from "@chakra-ui/focus-lock";
 import { useBookmarkProvider } from "~/components/BookmarkProvider";
 import humanFormat from "human-format";
-import { ComponentProps } from "react";
+import { ComponentProps, useReducer, useRef } from "react";
 import { Alert } from "~/components/Alert";
 
 export const MediaButton = ({
@@ -80,47 +91,84 @@ const Media = ({
   const { handlers } = useBookmarkProvider();
   const alertHandler = useDisclosure();
   const meta = media.meta;
+  const [action, buttonHandler] = useReducer(
+    (s: "delete" | "compress", a: "delete" | "compress") => {
+      alertHandler.onOpen();
+      return a;
+    },
+    "delete"
+  );
   const commit = () => {
     handlers.deleteMedia(media.id);
     alertHandler.onClose();
   };
   return (
-    <Box my={4}>
-      <Flex gap={2}>
-        <Box>
-          <video src={media.url} controls />
-        </Box>
-        <Center w={16}>
-          <Icon as={BiTrash} boxSize={6} onClick={alertHandler.onOpen} />
-          <Alert
-            isOpen={alertHandler.isOpen}
-            onClose={alertHandler.onClose}
-            title="Delete media"
-            commit={commit}
-            commitName="Delete"
+    <>
+      <Flex gap={2} my={1}>
+        <Text w="full" fontSize="sm" py={2} px={1}>
+          {humanFormat(Number(media.size), { unit: "B" })} | {meta.width}x
+          {meta.height} | {Math.floor(Number(meta.duration) / 60)}m
+        </Text>
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            aria-label="Options"
+            icon={<BiDotsHorizontalRounded />}
+            bg="inherit"
           />
-        </Center>
+          <MenuList>
+            <MenuItem
+              icon={<BiTrash />}
+              onClick={() => buttonHandler("delete")}
+            >
+              Delete
+            </MenuItem>
+            <MenuItem
+              icon={<FaCompressArrowsAlt />}
+              onClick={() => buttonHandler("compress")}
+            >
+              Compress
+            </MenuItem>
+          </MenuList>
+        </Menu>
+        <PlayButton src={media.url} />
       </Flex>
-      <Text w="full" fontSize="xs" mt={1}>
-        {humanFormat(Number(media.size), { unit: "B" })} | {meta.codec} |{" "}
-        {meta.width}x{meta.height} | {Math.floor(Number(meta.duration) / 60)}m
-      </Text>
-    </Box>
+      <Alert
+        isOpen={alertHandler.isOpen}
+        onClose={alertHandler.onClose}
+        title={action === "delete" ? "Delete media" : "Compress media"}
+        commit={commit}
+        commitName={action === "delete" ? "Delete" : "Compress"}
+      />
+    </>
   );
 };
 
 const Sample = ({ sample }: { sample: string }) => {
   return (
-    <Box my={4}>
-      <Flex gap={2}>
-        <Box>
-          <video src={sample} controls />
-        </Box>
-        <Box w={16} />
-      </Flex>
-      <Text w="full" fontSize="xs">
+    <Flex gap={2} my={1}>
+      <Text w="full" fontSize="sm" py={2} px={1}>
         Sample
       </Text>
-    </Box>
+      <Spacer />
+      <PlayButton src={sample} />
+    </Flex>
+  );
+};
+
+const PlayButton = ({ src }: { src: string }) => {
+  const ref = useRef<HTMLVideoElement>(null);
+
+  return (
+    <>
+      <video src={src} style={{ width: 0, height: 0 }} controls ref={ref} />
+      <IconButton
+        rounded="3xl"
+        aria-label="Play"
+        fontSize="2xl"
+        icon={<BiPlay />}
+        onClick={() => ref.current?.play()}
+      />
+    </>
   );
 };
