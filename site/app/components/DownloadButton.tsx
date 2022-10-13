@@ -14,7 +14,6 @@ import {
   StatLabel,
   useDisclosure,
   AlertDialogBody,
-  Button,
   Text,
   Tabs,
   Tab,
@@ -25,6 +24,7 @@ import {
   Avatar,
   Flex,
   Input,
+  IconButton,
 } from "@chakra-ui/react";
 import { useFetcher } from "@remix-run/react";
 import { SerializeFrom } from "@remix-run/node";
@@ -43,6 +43,7 @@ import {
   BiData,
   BiCalendarAlt,
 } from "react-icons/bi";
+import { BsArrowUp } from "react-icons/bs";
 import { FocusLock } from "@chakra-ui/focus-lock";
 import { useBookmarkProvider } from "~/components/BookmarkProvider";
 import { color, icon } from "~/libs/status/utils";
@@ -187,9 +188,13 @@ const ManualLinkPanel = () => {
     <Flex gap={1}>
       <Input onChange={onChange} placeholder="Input custom link url" />
       <DownloadConfirm item={{ title: "Custom link", link: value }}>
-        <Button disabled={!value} colorScheme="teal">
-          Submit
-        </Button>
+        <IconButton
+          rounded="3xl"
+          aria-label="Submit"
+          icon={<BsArrowUp />}
+          disabled={!value}
+          colorScheme="teal"
+        />
       </DownloadConfirm>
     </Flex>
   );
