@@ -26,6 +26,7 @@ model Product {
   casts         Cast[]
   downloadTasks DownloadTask[]
   medias        Media[]
+  compressTasks CompressTask[]
 
   @@index([createdAt(sort: Desc)])
   @@index([title])
@@ -74,8 +75,10 @@ model DownloadTask {
 
 model CompressTask {
   id        String     @id @default(uuid())
-  mediaId   String
-  media     Media      @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  mediaId   String?
+  media     Media?     @relation(fields: [mediaId], references: [id])
+  productId String
+  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @default(now()) @updatedAt
   startedAt DateTime?
