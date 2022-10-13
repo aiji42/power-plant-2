@@ -1,5 +1,5 @@
-import { DataFunctionArgs, json } from "@remix-run/node";
-import { RouteParams } from "routes-gen";
+import { DataFunctionArgs, json, redirect } from "@remix-run/node";
+import { route, RouteParams } from "routes-gen";
 import { productFromMGS } from "~/libs/poduct/mgs.server";
 import { cacheHeaders } from "~/libs/cache/cache.server";
 import { productFromFAN } from "~/libs/poduct/fan.server";
@@ -13,6 +13,12 @@ export const loader = async ({ params }: DataFunctionArgs) => {
   ]);
   const product = mgs ?? fan;
   if (!product) throw new Response("", { status: 404 });
+
+  if (code !== product.code)
+    return redirect(route("/product/:code", { code: product.code }), {
+      status: 301,
+      headers: cacheHeaders(),
+    });
 
   return json(
     {
