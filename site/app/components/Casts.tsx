@@ -17,9 +17,15 @@ import {
   Link,
   Flex,
   Spacer,
-  Button,
+  IconButton,
 } from "@chakra-ui/react";
-import { FaSnowman, FaVial, FaPizzaSlice } from "react-icons/fa";
+import {
+  FaSnowman,
+  FaVial,
+  FaPizzaSlice,
+  FaUnlink,
+  FaLink,
+} from "react-icons/fa";
 import { FocusLock } from "@chakra-ui/focus-lock";
 import { useBookmarkProvider } from "~/components/BookmarkProvider";
 
@@ -70,7 +76,7 @@ const CastButton = ({
       <PopoverTrigger>
         <Tag
           size="lg"
-          colorScheme="red"
+          colorScheme="teal"
           borderRadius="full"
           mr={2}
           variant={connectedCast ? "subtle" : "outline"}
@@ -99,17 +105,19 @@ const CastButton = ({
                   rel="noopener noreferrer"
                 >
                   <Icon as={[FaSnowman, FaVial, FaPizzaSlice][i]} />
-                </Link>{" "}
+                </Link>
                 <Spacer />
               </Fragment>
             ))}
-            <Button
+            <IconButton
+              mt={1}
+              rounded="3xl"
+              aria-label={connectedCast ? "Disconnect" : "Connect"}
+              icon={connectedCast ? <FaUnlink /> : <FaLink />}
               onClick={onClick}
               disabled={!isBookmarking || optimist}
-              mt={1}
-            >
-              {connectedCast ? "Disconnect" : "Connect"}
-            </Button>
+              colorScheme={connectedCast ? "red" : "teal"}
+            />
           </Flex>
         </FocusLock>
       </PopoverContent>
