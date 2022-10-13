@@ -1,0 +1,37 @@
+{
+  "taskGroups": [
+    {
+      "taskCount": "1",
+      "parallelism": "1",
+      "taskSpec": {
+        "computeResource": {
+          "cpuMilli": "8000",
+          "memoryMib": "8192"
+        },
+        "maxRetryCount": 0,
+        "maxRunDuration": "7200s",
+        "runnables": [
+          {
+            "container": {
+              "imageUri": "gcr.io/power-plant-2/power-plant-2/compress-job:latest",
+              "entrypoint": ""
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "allocationPolicy": {
+    "instances": [
+      {
+        "policy": {
+          "machineType": "e2-highcpu-8",
+          "provisioningModel": "SPOT"
+        }
+      }
+    ]
+  },
+  "logsPolicy": {
+    "destination": "CLOUD_LOGGING"
+  }
+}

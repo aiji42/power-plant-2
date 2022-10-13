@@ -50,6 +50,18 @@ app.post("/download-task", async (request, reply) => {
   return reply.code(401).send({ message: "invalid request" });
 });
 
+app.post("/compress-task", async (request, reply) => {
+  const data = request.body as SupabaseWebhookData<{ id: string }, null>;
+  if (data.type === "INSERT" && data.table === "CompressTask") {
+    const log =
+      await $`gcloud beta batch jobs submit compress-job-${createRandomString(
+        16
+      )} --location asia-southeast1 --config ./configs/compress-job.json`;
+    return reply.code(200).send({ message: log.message, stdout: log.stdout });
+  }
+  return reply.code(401).send({ message: "invalid request" });
+});
+
 app.post("/media", async (request, reply) => {
   const data = request.body as SupabaseWebhookData<
     null,
