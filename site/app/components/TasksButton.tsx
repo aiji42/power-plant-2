@@ -14,11 +14,13 @@ import {
   AvatarBadge,
   Avatar,
   IconButton,
+  Collapse,
 } from "@chakra-ui/react";
 import { BsListTask } from "react-icons/bs";
 import { FocusLock } from "@chakra-ui/focus-lock";
 import { useBookmarkProvider } from "~/components/BookmarkProvider";
 import { color, icon } from "~/libs/status/utils";
+import { useReducer } from "react";
 
 export const TaskButton = (props: BoxProps) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
@@ -60,6 +62,7 @@ export const TaskButton = (props: BoxProps) => {
 };
 
 const TasksPanel = () => {
+  const [showFull, toggle] = useReducer((s) => !s, false);
   const { bookmark } = useBookmarkProvider();
   const tasks = [
     ...(bookmark?.downloadTasks ?? []),
@@ -84,7 +87,9 @@ const TasksPanel = () => {
                 stopped: {new Date(task.stoppedAt).toLocaleString()}
               </>
             )}
-            <Text noOfLines={3}>{task.message}</Text>
+            <Collapse startingHeight={20} onClick={toggle} in={showFull}>
+              {task.message}
+            </Collapse>
           </StatHelpText>
         </Stat>
       ))}
