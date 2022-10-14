@@ -79,8 +79,9 @@ const failed = (job: Pick<CompressTask, "id">, e: Error) => {
 };
 
 const download = async (url: string, dir: string): Promise<string> => {
+  $`mkdir -p ${dir}`;
   const outName = `${dir}/video.mp4`;
-  await $`ffmpeg -i ${url} -c copy ${outName}`;
+  await $`ffmpeg -i ${url} -bsf:a aac_adtstoasc -c copy ${outName}`;
 
   return outName;
 };
