@@ -49,6 +49,7 @@ export const MediaButton = ({
         <Box {...props}>
           <Avatar
             size="sm"
+            as={IconButton}
             icon={<Icon as={BiPlayCircle} boxSize={8} color="white" />}
             backgroundColor="transparent"
           >
@@ -99,12 +100,14 @@ const Media = ({
     "delete"
   );
   const commit = () => {
-    handlers.deleteMedia(media.id);
+    action === "delete"
+      ? handlers.deleteMedia(media.id)
+      : handlers.addCompressTask(media.id);
     alertHandler.onClose();
   };
   return (
     <>
-      <Flex gap={2} my={1}>
+      <Flex gap={2} my={4}>
         <Text w="full" fontSize="sm" py={2} px={1}>
           {humanFormat(Number(media.size), { unit: "B" })} | {meta.width}x
           {meta.height} | {Math.floor(Number(meta.duration) / 60)}m
@@ -115,6 +118,7 @@ const Media = ({
             aria-label="Options"
             icon={<BiDotsHorizontalRounded />}
             bg="inherit"
+            fontSize="xl"
           />
           <MenuList>
             <MenuItem
@@ -146,7 +150,7 @@ const Media = ({
 
 const Sample = ({ sample }: { sample: string }) => {
   return (
-    <Flex gap={2} my={1}>
+    <Flex gap={2} my={4}>
       <Text w="full" fontSize="sm" py={2} px={1}>
         Sample
       </Text>

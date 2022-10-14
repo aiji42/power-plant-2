@@ -19,6 +19,7 @@ import { DownloadButton } from "~/components/DownloadButton";
 import { Casts } from "~/components/Casts";
 import { BookmarkProvider } from "~/components/BookmarkProvider";
 import { MediaButton } from "~/components/MediaButton";
+import { TaskButton } from "~/components/TasksButton";
 
 export const ProductPage = () => {
   const data = useLoaderData<typeof loader>();
@@ -46,6 +47,7 @@ export const ProductPage = () => {
               <Icon as={BiLinkExternal} boxSize={8} />
             </Link>
             <Spacer />
+            <TaskButton mr={4} />
             <MediaButton sample={data.product.sample} mr={4} />
             <DownloadButton code={data.product.code} mr={4} />
             <BookmarkButton />

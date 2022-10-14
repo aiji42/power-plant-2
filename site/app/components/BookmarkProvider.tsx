@@ -15,6 +15,7 @@ const Context = createContext<
   SerializeFrom<typeof bookmarkLoader> & {
     handlers: {
       addDownloadTask: (url: string) => void;
+      addCompressTask: (mediaId: string) => void;
       addBookmark: () => void;
       deleteBookmark: () => void;
       deleteMedia: (id: string) => void;
@@ -28,6 +29,7 @@ const Context = createContext<
   bookmark: null,
   handlers: {
     addDownloadTask: () => {},
+    addCompressTask: () => {},
     addBookmark: () => {},
     deleteBookmark: () => {},
     deleteMedia: () => {},
@@ -54,6 +56,15 @@ export const BookmarkProvider = ({
     (url: string) => {
       fetcher.submit(
         { action: "addDownloadTask", url },
+        { action, method: "patch" }
+      );
+    },
+    [fetcher.submit, action]
+  );
+  const addCompressTask = useCallback(
+    (mediaId: string) => {
+      fetcher.submit(
+        { action: "addCompressTask", mediaId },
         { action, method: "patch" }
       );
     },
@@ -101,12 +112,19 @@ export const BookmarkProvider = ({
     if (
       ["Waiting", "Running"].includes(
         fetcher.data?.bookmark?.downloadTasks?.[0]?.status ?? ""
+      ) ||
+      ["Waiting", "Running"].includes(
+        fetcher.data?.bookmark?.compressTasks?.[0]?.status ?? ""
       )
     ) {
       const id = setInterval(refreshBookmark, 10000);
       return () => clearInterval(id);
     }
-  }, [fetcher.data?.bookmark?.downloadTasks?.[0]?.status, refreshBookmark]);
+  }, [
+    fetcher.data?.bookmark?.downloadTasks?.[0]?.status,
+    fetcher.data?.bookmark?.compressTasks?.[0]?.status,
+    refreshBookmark,
+  ]);
 
   return (
     <Context.Provider
@@ -114,6 +132,7 @@ export const BookmarkProvider = ({
         bookmark: fetcher.data?.bookmark ?? null,
         handlers: {
           addDownloadTask,
+          addCompressTask,
           addBookmark,
           deleteBookmark,
           deleteMedia,

@@ -8,6 +8,7 @@ import {
   deleteMedia,
   connectCast,
   disconnectCast,
+  createCompressTask,
 } from "~/libs/prisma/product.server";
 
 export const loader = async ({ params }: DataFunctionArgs) => {
@@ -31,6 +32,11 @@ export const action = async ({ params, request }: DataFunctionArgs) => {
       const url = data.get("url");
       if (typeof url !== "string") throw new Error("invalid data");
       await createDownloadTask(code, url);
+    }
+    if (data.get("action") === "addCompressTask") {
+      const mediaId = data.get("mediaId");
+      if (typeof mediaId !== "string") throw new Error("invalid data");
+      await createCompressTask(code, mediaId);
     }
     if (data.get("action") === "deleteMedia") {
       const id = data.get("id");

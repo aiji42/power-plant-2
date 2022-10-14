@@ -8,6 +8,7 @@ export const getProductData = async (code: string) => {
     include: {
       casts: { select: { name: true, _count: { select: { products: true } } } },
       downloadTasks: { orderBy: { createdAt: "desc" } },
+      compressTasks: { orderBy: { createdAt: "desc" } },
       medias: true,
     },
   });
@@ -48,6 +49,19 @@ export const createDownloadTask = async (code: string, url: string) => {
       downloadTasks: {
         create: {
           targetUrl: url,
+        },
+      },
+    },
+  });
+};
+
+export const createCompressTask = async (code: string, mediaId: string) => {
+  await prisma.product.update({
+    where: { code },
+    data: {
+      compressTasks: {
+        create: {
+          mediaId,
         },
       },
     },

@@ -46,7 +46,7 @@ import {
 import { BsArrowUp } from "react-icons/bs";
 import { FocusLock } from "@chakra-ui/focus-lock";
 import { useBookmarkProvider } from "~/components/BookmarkProvider";
-import { color, icon } from "~/libs/status/utils";
+import { color } from "~/libs/status/utils";
 import { Alert } from "~/components/Alert";
 
 export const DownloadButton = ({
@@ -68,6 +68,7 @@ export const DownloadButton = ({
         <Box {...props}>
           <Avatar
             size="sm"
+            as={IconButton}
             icon={<Icon as={BiCloudDownload} boxSize={8} color="white" />}
             backgroundColor="transparent"
           >
@@ -82,15 +83,11 @@ export const DownloadButton = ({
           <PopoverArrow />
           <Tabs>
             <TabList>
-              <Tab>Tasks</Tab>
               <Tab>Links</Tab>
               <Tab>Manual</Tab>
             </TabList>
 
             <TabPanels>
-              <TabPanel>
-                <DownloadTasksPanel />
-              </TabPanel>
               <TabPanel>
                 <LinksPanel code={code} />
               </TabPanel>
@@ -145,36 +142,6 @@ const LinksPanel = ({ code }: { code: string }) => {
         </DownloadConfirm>
       ))}
       {fetcher.data && fetcher.data.items.length < 1 && <Text>No data</Text>}
-    </>
-  );
-};
-
-const DownloadTasksPanel = () => {
-  const { bookmark } = useBookmarkProvider();
-
-  return (
-    <>
-      {bookmark?.downloadTasks.map((task) => (
-        <Stat my={4} key={task.id}>
-          <StatLabel>
-            <Icon as={icon(task.status)} color={color(task.status)} mr={1} />
-            {task.status}
-          </StatLabel>
-          <StatHelpText>
-            {task.startedAt && (
-              <>started: {new Date(task.startedAt).toLocaleString()}</>
-            )}
-            {task.stoppedAt && (
-              <>
-                <br />
-                stopped: {new Date(task.stoppedAt).toLocaleString()}
-              </>
-            )}
-            <Text noOfLines={3}>{task.message}</Text>
-          </StatHelpText>
-        </Stat>
-      ))}
-      {(bookmark?.downloadTasks ?? []).length < 1 && <Text>No tasks</Text>}
     </>
   );
 };
