@@ -8,8 +8,8 @@ export { ProductPage as default } from "~/pages/ProductPage";
 export const loader = async ({ params }: DataFunctionArgs) => {
   const { code } = params as RouteParams["/product/:code"];
   const [mgs, fan] = await Promise.all([
-    productFromMGS(code),
-    productFromFAN(code),
+    productFromMGS(code.trim()),
+    productFromFAN(code.trim()),
   ]);
   const product = mgs ?? fan;
   if (!product) throw new Response("", { status: 404 });
