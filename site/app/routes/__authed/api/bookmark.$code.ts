@@ -9,12 +9,18 @@ import {
   connectCast,
   disconnectCast,
   createCompressTask,
+  getCodeByRandom,
 } from "~/libs/prisma/product.server";
 
 export const loader = async ({ params }: DataFunctionArgs) => {
   const { code } = params as RouteParams["/api/bookmark/:code"];
+  const [bookmark, randomCode] = await Promise.all([
+    getProductData(code),
+    getCodeByRandom(),
+  ]);
   return json({
-    bookmark: await getProductData(code),
+    bookmark,
+    randomCode: bookmark ? randomCode : "",
   });
 };
 

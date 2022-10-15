@@ -2,7 +2,13 @@ import { useNavigate } from "@remix-run/react";
 import { LEFT, RIGHT, useSwipeable } from "react-swipeable";
 import { useState } from "react";
 
-export const useSwipeToBeside = ([leftTo, rightTo]: [string, string]) => {
+export const useSwipeToBeside = ({
+  leftTo,
+  rightTo,
+}: {
+  leftTo?: string;
+  rightTo?: string;
+}) => {
   const navi = useNavigate();
   const [swiping, setSwiping] = useState<typeof LEFT | typeof RIGHT | null>(
     null
@@ -10,18 +16,19 @@ export const useSwipeToBeside = ([leftTo, rightTo]: [string, string]) => {
 
   const handler = useSwipeable({
     onSwipedLeft: () => {
-      navi(rightTo);
+      rightTo && navi(rightTo);
     },
     onSwipedRight: () => {
-      navi(leftTo);
+      leftTo && navi(leftTo);
     },
     onSwiping: ({ dir }) => {
-      if (dir === LEFT || dir === RIGHT) setSwiping(dir);
+      if ((dir === LEFT && rightTo) || (dir === RIGHT && leftTo))
+        setSwiping(dir);
     },
     onSwiped: () => {
       setSwiping(null);
     },
-    delta: 100,
+    delta: 80,
   });
 
   return { handler, swiping };

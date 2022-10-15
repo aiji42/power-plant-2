@@ -104,3 +104,20 @@ export const countByCast = async (name: string) => {
     where: { casts: { some: { name } } },
   });
 };
+
+export const getCodeByRandom = async () => {
+  const count = await prisma.media.count();
+  const skip = Math.floor(Math.random() * count);
+  const {
+    product: { code },
+  } = await prisma.media.findFirstOrThrow({
+    skip,
+    select: {
+      product: {
+        select: { code: true },
+      },
+    },
+  });
+
+  return code;
+};

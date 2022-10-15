@@ -27,6 +27,7 @@ const Context = createContext<
   }
 >({
   bookmark: null,
+  randomCode: "",
   handlers: {
     addDownloadTask: () => {},
     addCompressTask: () => {},
@@ -130,6 +131,7 @@ export const BookmarkProvider = ({
     <Context.Provider
       value={{
         bookmark: fetcher.data?.bookmark ?? null,
+        randomCode: fetcher.data?.randomCode ?? "",
         handlers: {
           addDownloadTask,
           addCompressTask,
