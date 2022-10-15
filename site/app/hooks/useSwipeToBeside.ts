@@ -21,7 +21,7 @@ export const useSwipeToBeside = ([leftTo, rightTo]: [string, string]) => {
     onSwiped: () => {
       setSwiping(null);
     },
-    delta: 200,
+    delta: 100,
   });
 
   return { handler, swiping };
