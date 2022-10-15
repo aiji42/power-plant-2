@@ -7818,6 +7818,17 @@ remix-utils@^2.2.0:
     type-fest "^2.5.2"
     uuid "^8.3.2"
 
+remix-utils@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/remix-utils/-/remix-utils-3.3.0.tgz#1387d055b3ec176b4724906086c95ad85c573805"
+  integrity sha512-jqqFcUH8DNTgcw8rje0q1Ra3w0TBa8B8c39BArXIweWsNX12MVwBY9NET3c+IXj0iQlzRk4GNObuOe4r5UrJIg==
+  dependencies:
+    intl-parse-accept-language "^1.0.0"
+    is-ip "^3.1.0"
+    schema-dts "^1.1.0"
+    type-fest "^2.5.2"
+    uuid "^8.3.2"
+
 repeat-element@^1.1.2:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/repeat-element/-/repeat-element-1.1.4.tgz#be681520847ab58c7568ac75fbfad28ed42d39e9"

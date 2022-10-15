@@ -33,6 +33,7 @@
     "react-swipeable": "^7.0.0",
     "remix-auth": "^3.3.0",
     "remix-auth-supabase": "^4.0.0",
+    "remix-utils": "^3.3.0",
     "routes-gen": "^0.5.2"
   },
   "devDependencies": {

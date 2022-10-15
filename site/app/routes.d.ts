@@ -9,6 +9,7 @@ declare module "routes-gen" {
     "/fana/:page": { "page": string };
     "/fanc/:page": { "page": string };
     "/mgs/:page": { "page": string };
+    "/dev/null": Record<string, never>;
     "/login": Record<string, never>;
   };
 
@@ -23,6 +24,7 @@ declare module "routes-gen" {
       | ["/fana/:page", RouteParams["/fana/:page"]]
       | ["/fanc/:page", RouteParams["/fanc/:page"]]
       | ["/mgs/:page", RouteParams["/mgs/:page"]]
+      | ["/dev/null"]
       | ["/login"]
   >(...args: T): typeof args[0];
 }

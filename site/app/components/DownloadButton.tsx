@@ -53,7 +53,6 @@ export const DownloadButton = ({
   ...props
 }: { code: string } & BoxProps) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
-  const { bookmark } = useBookmarkProvider();
 
   return (
     <Popover

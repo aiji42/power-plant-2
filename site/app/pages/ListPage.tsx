@@ -25,11 +25,31 @@ import { route } from "routes-gen";
 import { useSwipeToNext } from "~/hooks/useSwipeToNext";
 import { loader } from "~/routes/__authed/stock.$page";
 import { color } from "~/libs/status/utils";
-import { ChangeEvent, Fragment, ReactNode, useReducer, useRef } from "react";
+import {
+  ChangeEvent,
+  Fragment,
+  ReactNode,
+  useEffect,
+  useReducer,
+  useRef,
+} from "react";
 import { useSwipeToBeside } from "~/hooks/useSwipeToBeside";
+import { useDataRefresh } from "remix-utils";
 
 export function ListPage() {
   const data = useLoaderData<typeof loader>();
+  const { refresh } = useDataRefresh();
+  useEffect(() => {
+    if (
+      data.items.some(({ status }) =>
+        ["Waiting", "Running"].includes(status ?? "")
+      )
+    ) {
+      const interval = setInterval(refresh, 10000);
+      return () => clearInterval(interval);
+    }
+  }, [refresh, data.items]);
+
   const { handler, swiping } = useSwipeToNext(data.nextTo);
 
   return (
