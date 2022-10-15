@@ -15,7 +15,8 @@ export const BookmarkButton = () => {
         boxSize={8}
         color={isBookmarking ? "teal.300" : undefined}
         onClick={isBookmarking ? onOpen : handlers.addBookmark}
-        bg="inherit"
+        backgroundColor="transparent"
+        rounded="3xl"
       />
 
       <Alert

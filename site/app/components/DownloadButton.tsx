@@ -20,8 +20,6 @@ import {
   TabList,
   TabPanels,
   TabPanel,
-  AvatarBadge,
-  Avatar,
   Flex,
   Input,
   IconButton,
@@ -44,10 +42,11 @@ import {
   BiCalendarAlt,
 } from "react-icons/bi";
 import { BsArrowUp } from "react-icons/bs";
+import { CgDanger } from "react-icons/cg";
 import { FocusLock } from "@chakra-ui/focus-lock";
 import { useBookmarkProvider } from "~/components/BookmarkProvider";
-import { color } from "~/libs/status/utils";
 import { Alert } from "~/components/Alert";
+import { TaskStatus } from "@prisma/client";
 
 export const DownloadButton = ({
   code,
@@ -55,7 +54,6 @@ export const DownloadButton = ({
 }: { code: string } & BoxProps) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
   const { bookmark } = useBookmarkProvider();
-  const [lastTask] = bookmark?.downloadTasks ?? [];
 
   return (
     <Popover
@@ -66,16 +64,13 @@ export const DownloadButton = ({
     >
       <PopoverTrigger>
         <Box {...props}>
-          <Avatar
-            size="sm"
-            as={IconButton}
-            icon={<Icon as={BiCloudDownload} boxSize={8} color="white" />}
+          <IconButton
+            rounded="3xl"
+            aria-label="Download media"
+            as={BiCloudDownload}
+            boxSize={8}
             backgroundColor="transparent"
-          >
-            {lastTask && (
-              <AvatarBadge boxSize="1em" bg={color(lastTask.status)} />
-            )}
-          </Avatar>
+          />
         </Box>
       </PopoverTrigger>
       <PopoverContent p={2}>
@@ -103,6 +98,7 @@ export const DownloadButton = ({
 };
 
 const LinksPanel = ({ code }: { code: string }) => {
+  const { bookmark } = useBookmarkProvider();
   const fetcher = useFetcher<SerializeFrom<typeof torrentLoader>>();
   useEffect(() => {
     fetcher.load(route("/api/torrent/:code", { code }));
@@ -124,7 +120,14 @@ const LinksPanel = ({ code }: { code: string }) => {
       {fetcher.data?.items.map((item, i) => (
         <DownloadConfirm key={item.link + i} item={item}>
           <Stat my={4}>
-            <StatLabel noOfLines={2}>{item.title}</StatLabel>
+            <StatLabel noOfLines={2}>
+              {bookmark?.downloadTasks?.filter(
+                ({ targetUrl }) => targetUrl === item.link
+              )?.[0]?.status === TaskStatus.Failed && (
+                <Icon as={CgDanger} color="red.300" />
+              )}
+              {item.title}
+            </StatLabel>
             <StatHelpText>
               <Icon as={BiCalendarAlt} />
               {item.registeredAt.slice(0, 10)}
