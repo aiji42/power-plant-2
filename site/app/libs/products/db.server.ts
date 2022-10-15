@@ -3,11 +3,27 @@ import { prisma } from "~/libs/prisma/client.server";
 
 const SIZE = 100;
 
-export const productsFromDB = async (page: number): Promise<ProductList> => {
+export const productsFromDB = async (
+  page: number,
+  option?: { cast?: string; size?: number }
+): Promise<ProductList> => {
+  const size = option?.size ?? SIZE;
+
   const res = await prisma.product.findMany({
     orderBy: { createdAt: "desc" },
-    take: SIZE,
-    skip: SIZE * (page - 1),
+    ...(option?.cast
+      ? {
+          where: {
+            casts: {
+              some: {
+                name: option.cast,
+              },
+            },
+          },
+        }
+      : {}),
+    take: size,
+    skip: size * (page - 1),
     select: {
       code: true,
       title: true,

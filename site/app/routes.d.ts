@@ -6,6 +6,7 @@ declare module "routes-gen" {
     "/api/casts/:code": { "code": string };
     "/product/:code": { "code": string };
     "/stock/:page": { "page": string };
+    "/cast/:cast": { "cast": string };
     "/fana/:page": { "page": string };
     "/fanc/:page": { "page": string };
     "/mgs/:page": { "page": string };
@@ -21,6 +22,7 @@ declare module "routes-gen" {
       | ["/api/casts/:code", RouteParams["/api/casts/:code"]]
       | ["/product/:code", RouteParams["/product/:code"]]
       | ["/stock/:page", RouteParams["/stock/:page"]]
+      | ["/cast/:cast", RouteParams["/cast/:cast"]]
       | ["/fana/:page", RouteParams["/fana/:page"]]
       | ["/fanc/:page", RouteParams["/fanc/:page"]]
       | ["/mgs/:page", RouteParams["/mgs/:page"]]

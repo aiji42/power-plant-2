@@ -2,7 +2,6 @@ import { parse } from "node-html-parser";
 import { countByCast } from "~/libs/prisma/product.server";
 
 type Cast = {
-  links: string[];
   name: string;
   productCount: number;
 };
@@ -19,7 +18,6 @@ export const searchCasts = async (s: string): Promise<Casts> => {
   return await Promise.all(
     casts.map(async (name) => ({
       name,
-      links: searchCastUrls(name).map(String),
       productCount: await countByCast(name),
     }))
   );
@@ -68,4 +66,29 @@ const searchCastsFromC = async (s: string): Promise<string[]> => {
   const html = await res.text();
   const root = parse(html);
   return root.querySelectorAll("a.actress").map<string>((el) => el.innerText);
+};
+
+type Result = {
+  actress: Array<{
+    id: number;
+    name: string;
+    ruby: string;
+    imageURL: {
+      small: string;
+      large: string;
+    };
+  }>;
+};
+
+export const searchFromFan = async (
+  s: string
+): Promise<Result["actress"][number] | null> => {
+  const url = new URL(`${process.env.FAN_API_CAST_ENDPOINT}`);
+  url.searchParams.set("api_id", process.env.FAN_API_ID!);
+  url.searchParams.set("affiliate_id", process.env.FAN_AFF_ID!);
+  url.searchParams.set("keyword", s);
+
+  const res: { result: Result } = await fetch(url).then((res) => res.json());
+
+  return res.result.actress[0];
 };

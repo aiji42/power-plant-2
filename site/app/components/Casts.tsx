@@ -1,32 +1,10 @@
-import { useFetcher } from "@remix-run/react";
+import { Link, useFetcher } from "@remix-run/react";
 import { SerializeFrom } from "@remix-run/node";
 import { loader as castsLoader } from "~/routes/__authed/api/casts.$code";
-import { Fragment, useEffect } from "react";
+import { useEffect } from "react";
 import { route } from "routes-gen";
-import {
-  Box,
-  Popover,
-  PopoverArrow,
-  PopoverContent,
-  PopoverTrigger,
-  Skeleton,
-  Tag,
-  TagLabel,
-  useDisclosure,
-  Icon,
-  Link,
-  Flex,
-  Spacer,
-  IconButton,
-} from "@chakra-ui/react";
-import {
-  FaSnowman,
-  FaVial,
-  FaPizzaSlice,
-  FaUnlink,
-  FaLink,
-} from "react-icons/fa";
-import { FocusLock } from "@chakra-ui/focus-lock";
+import { Box, Skeleton, Tag, TagLabel, TagRightIcon } from "@chakra-ui/react";
+import { BiUnlink, BiLink } from "react-icons/bi";
 import { useBookmarkProvider } from "~/components/BookmarkProvider";
 
 export const Casts = ({ code }: { code: string }) => {
@@ -56,71 +34,35 @@ const CastButton = ({
 }: {
   cast: SerializeFrom<typeof castsLoader>["casts"][number];
 }) => {
-  const { bookmark, isBookmarking, optimist, handlers } = useBookmarkProvider();
-  const { onOpen, onClose, isOpen } = useDisclosure();
+  const { bookmark, handlers } = useBookmarkProvider();
   const connectedCast = bookmark?.casts.find(({ name }) => name === cast.name);
-  const onClick = () => {
-    connectedCast
-      ? handlers.disconnectCast(cast.name)
-      : handlers.connectCast(cast.name);
-    onClose();
-  };
 
   return (
-    <Popover
-      isOpen={isOpen}
-      onOpen={onOpen}
-      onClose={onClose}
-      placement="bottom"
+    <Tag
+      size="lg"
+      colorScheme="teal"
+      borderRadius="full"
+      mr={2}
+      variant={connectedCast ? "subtle" : "outline"}
     >
-      <PopoverTrigger>
-        <Tag
-          size="lg"
-          colorScheme="teal"
-          borderRadius="full"
-          mr={2}
-          variant={connectedCast ? "subtle" : "outline"}
-        >
-          <TagLabel>
-            {cast.name}
-            {connectedCast
-              ? `(${connectedCast._count.products})`
-              : cast.productCount
-              ? `(${cast.productCount})`
-              : null}
-          </TagLabel>
-        </Tag>
-      </PopoverTrigger>
-      <PopoverContent p={4}>
-        <FocusLock persistentFocus={false}>
-          <PopoverArrow />
-          <Flex gap={5}>
-            {cast.links.map((link, i) => (
-              <Fragment key={link}>
-                <Link
-                  href={link}
-                  display="block"
-                  fontSize="2xl"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Icon as={[FaSnowman, FaVial, FaPizzaSlice][i]} />
-                </Link>
-                <Spacer />
-              </Fragment>
-            ))}
-            <IconButton
-              mt={1}
-              rounded="3xl"
-              aria-label={connectedCast ? "Disconnect" : "Connect"}
-              icon={connectedCast ? <FaUnlink /> : <FaLink />}
-              onClick={onClick}
-              disabled={!isBookmarking || optimist}
-              colorScheme={connectedCast ? "red" : "teal"}
-            />
-          </Flex>
-        </FocusLock>
-      </PopoverContent>
-    </Popover>
+      <TagLabel>
+        <Link to={route("/cast/:cast", { cast: cast.name })}>
+          {cast.name}
+          {connectedCast
+            ? `(${connectedCast._count.products})`
+            : cast.productCount
+            ? `(${cast.productCount})`
+            : null}
+        </Link>
+      </TagLabel>
+      <TagRightIcon
+        as={connectedCast ? BiUnlink : BiLink}
+        onClick={() =>
+          connectedCast
+            ? handlers.disconnectCast(cast.name)
+            : handlers.connectCast(cast.name)
+        }
+      />
+    </Tag>
   );
 };
