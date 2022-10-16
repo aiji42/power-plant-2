@@ -1,5 +1,5 @@
-import { BiBookmark } from "react-icons/bi";
-import { IconButton, useDisclosure } from "@chakra-ui/react";
+import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
+import { Icon, IconButton, useDisclosure } from "@chakra-ui/react";
 import { useBookmarkProvider } from "~/components/BookmarkProvider";
 import { Alert } from "~/components/Alert";
 
@@ -11,7 +11,12 @@ export const BookmarkButton = () => {
     <>
       <IconButton
         aria-label="Bookmark"
-        as={BiBookmark}
+        icon={
+          <Icon
+            as={isBookmarking ? BsBookmarkFill : BsBookmark}
+            fontSize="2xl"
+          />
+        }
         boxSize={8}
         color={isBookmarking ? "teal.300" : undefined}
         onClick={isBookmarking ? onOpen : handlers.addBookmark}

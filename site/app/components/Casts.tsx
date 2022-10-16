@@ -34,7 +34,7 @@ const CastButton = ({
 }: {
   cast: SerializeFrom<typeof castsLoader>["casts"][number];
 }) => {
-  const { bookmark, handlers } = useBookmarkProvider();
+  const { bookmark, handlers, optimist } = useBookmarkProvider();
   const connectedCast = bookmark?.casts.find(({ name }) => name === cast.name);
 
   return (
@@ -57,11 +57,12 @@ const CastButton = ({
       </TagLabel>
       <TagRightIcon
         as={connectedCast ? BiCheck : BiPlus}
-        onClick={() =>
-          connectedCast
-            ? handlers.disconnectCast(cast.name)
-            : handlers.connectCast(cast.name)
-        }
+        onClick={() => {
+          if (!optimist)
+            connectedCast
+              ? handlers.disconnectCast(cast.name)
+              : handlers.connectCast(cast.name);
+        }}
       />
     </Tag>
   );

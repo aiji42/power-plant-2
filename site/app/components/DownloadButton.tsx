@@ -61,7 +61,7 @@ export const DownloadButton = ({
           <IconButton
             rounded="3xl"
             aria-label="Download media"
-            as={BiCloudDownload}
+            icon={<Icon as={BiCloudDownload} fontSize="3xl" />}
             boxSize={8}
             backgroundColor="transparent"
           />

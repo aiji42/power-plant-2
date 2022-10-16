@@ -45,7 +45,7 @@ export const MediaButton = ({
           <Avatar
             size="sm"
             as={IconButton}
-            icon={<Icon as={BiPlayCircle} boxSize={8} color="white" />}
+            icon={<Icon as={BiPlayCircle} fontSize="3xl" color="white" />}
             backgroundColor="transparent"
           >
             {Number(bookmark?.medias.length) > 0 && (

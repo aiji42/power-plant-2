@@ -37,7 +37,7 @@ export const TaskButton = (props: BoxProps) => {
           <Avatar
             size="sm"
             as={IconButton}
-            icon={<Icon as={BsListTask} boxSize={8} color="white" />}
+            icon={<Icon as={BsListTask} fontSize="3xl" color="white" />}
             backgroundColor="transparent"
           >
             {lastTask && (

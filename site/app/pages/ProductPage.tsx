@@ -52,7 +52,7 @@ export const ProductPage = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Icon as={BiLinkExternal} boxSize={8} />
+                <Icon as={BiLinkExternal} fontSize="2xl" />
               </Link>
               <Spacer />
               <TaskButton mr={4} />
