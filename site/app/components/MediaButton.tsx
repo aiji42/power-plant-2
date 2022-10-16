@@ -39,12 +39,7 @@ export const MediaButton = ({
   const { bookmark } = useBookmarkProvider();
 
   return (
-    <Popover
-      isOpen={isOpen}
-      onOpen={onOpen}
-      onClose={onClose}
-      placement="bottom"
-    >
+    <Popover isOpen={isOpen} onOpen={onOpen} onClose={onClose} placement="top">
       <PopoverTrigger>
         <Box {...props}>
           <Avatar
@@ -143,6 +138,7 @@ const Media = ({
         title={action === "delete" ? "Delete media" : "Compress media"}
         commit={commit}
         commitName={action === "delete" ? "Delete" : "Compress"}
+        commitColorScheme={action === "delete" ? "red" : "teal"}
       />
     </>
   );

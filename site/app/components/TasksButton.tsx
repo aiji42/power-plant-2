@@ -31,12 +31,7 @@ export const TaskButton = (props: BoxProps) => {
   ].sort(({ createdAt: a }, { createdAt: b }) => (a > b ? -1 : 1));
 
   return (
-    <Popover
-      isOpen={isOpen}
-      onOpen={onOpen}
-      onClose={onClose}
-      placement="bottom"
-    >
+    <Popover isOpen={isOpen} onOpen={onOpen} onClose={onClose} placement="top">
       <PopoverTrigger>
         <Box {...props}>
           <Avatar
