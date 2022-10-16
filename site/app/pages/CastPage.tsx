@@ -29,7 +29,7 @@ export const CastPage = () => {
         {data.cast?.name}
       </Heading>
       <Flex mt={2} gap={4}>
-        <Image rounded={"md"} src={data.cast?.imageURL.large} w={40} h={40} />
+        <Image rounded={"md"} src={data.cast?.imageURL?.large} w={40} h={40} />
         <Center>
           <List spacing={3}>
             {data.links.map((link) => (

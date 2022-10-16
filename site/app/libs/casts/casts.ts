@@ -73,7 +73,7 @@ type Result = {
     id: number;
     name: string;
     ruby: string;
-    imageURL: {
+    imageURL?: {
       small: string;
       large: string;
     };
