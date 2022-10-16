@@ -3,15 +3,17 @@ import { route, RouteParams } from "routes-gen";
 import { productFromMGS } from "~/libs/poduct/mgs.server";
 import { cacheHeaders } from "~/libs/cache/cache.server";
 import { productFromFAN } from "~/libs/poduct/fan.server";
+import { productFromDb } from "~/libs/poduct/db.server";
 export { ProductPage as default } from "~/pages/ProductPage";
 
 export const loader = async ({ params }: DataFunctionArgs) => {
   const { code } = params as RouteParams["/product/:code"];
-  const [mgs, fan] = await Promise.all([
+  const [mgs, fan, db] = await Promise.all([
     productFromMGS(code.trim()),
     productFromFAN(code.trim()),
+    productFromDb(code.trim()),
   ]);
-  const product = mgs ?? fan;
+  const product = mgs ?? fan ?? db;
   if (!product) throw new Response("", { status: 404 });
 
   if (code !== product.code)

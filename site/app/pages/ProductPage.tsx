@@ -11,7 +11,6 @@ import {
   Icon,
   Spacer,
   Link,
-  Icon,
   IconButton,
 } from "@chakra-ui/react";
 import { loader } from "~/routes/__authed/product.$code";
@@ -138,7 +137,8 @@ export const ProductPage = () => {
                   <Text as={"span"} fontWeight={"bold"}>
                     再生時間:
                   </Text>{" "}
-                  {data.product.length}m
+                  {data.product.length || "-"}
+                  {data.product.length && "m"}
                 </ListItem>
               </List>
             </Box>
