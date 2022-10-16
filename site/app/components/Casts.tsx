@@ -4,7 +4,7 @@ import { loader as castsLoader } from "~/routes/__authed/api/casts.$code";
 import { useEffect } from "react";
 import { route } from "routes-gen";
 import { Box, Skeleton, Tag, TagLabel, TagRightIcon } from "@chakra-ui/react";
-import { BiUnlink, BiLink } from "react-icons/bi";
+import { BiCheck, BiPlus } from "react-icons/bi";
 import { useBookmarkProvider } from "~/components/BookmarkProvider";
 
 export const Casts = ({ code }: { code: string }) => {
@@ -56,7 +56,7 @@ const CastButton = ({
         </Link>
       </TagLabel>
       <TagRightIcon
-        as={connectedCast ? BiUnlink : BiLink}
+        as={connectedCast ? BiCheck : BiPlus}
         onClick={() =>
           connectedCast
             ? handlers.disconnectCast(cast.name)
