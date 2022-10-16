@@ -25,6 +25,7 @@ import { MediaButton } from "~/components/MediaButton";
 import { TaskButton } from "~/components/TasksButton";
 import { route } from "routes-gen";
 import { SwipeBesideNavi } from "~/components/SwipeBesideNavi";
+import { Toolbar } from "~/components/Toolbar";
 
 export const ProductPage = () => {
   const data = useLoaderData<typeof loader>();
@@ -34,6 +35,7 @@ export const ProductPage = () => {
     <BookmarkProvider code={data.product.code}>
       <SwipeBeside>
         <Box w="full" p={2}>
+          <Toolbar />
           <Image
             rounded={"md"}
             src={data.product.imageUrls[0]}

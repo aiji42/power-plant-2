@@ -19,12 +19,14 @@ import { route } from "routes-gen";
 import { FaCircle } from "react-icons/fa";
 import { color } from "~/libs/status/utils";
 import { Link } from "@remix-run/react";
+import { Toolbar } from "~/components/Toolbar";
 
 export const CastPage = () => {
   const data = useLoaderData<typeof loader>();
 
   return (
-    <Box p={4}>
+    <Box p={2}>
+      <Toolbar />
       <Heading as="h1" textAlign="center">
         {data.cast?.name}
       </Heading>
