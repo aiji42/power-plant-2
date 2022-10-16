@@ -1,4 +1,4 @@
-import { useLoaderData, useLocation } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import { ReactNode, useReducer } from "react";
 import {
   Box,
@@ -11,10 +11,12 @@ import {
   Icon,
   Spacer,
   Link,
+  Icon,
+  IconButton,
 } from "@chakra-ui/react";
 import { loader } from "~/routes/__authed/product.$code";
 import { BookmarkButton } from "~/components/BookmarkButton";
-import { BiLinkExternal } from "react-icons/bi";
+import { BiLinkExternal, BiClipboard } from "react-icons/bi";
 import { DownloadButton } from "~/components/DownloadButton";
 import { Casts } from "~/components/Casts";
 import {
@@ -30,6 +32,10 @@ import { Toolbar } from "~/components/Toolbar";
 export const ProductPage = () => {
   const data = useLoaderData<typeof loader>();
   const [showFull, toggle] = useReducer((s) => !s, false);
+  const [copied, copy] = useReducer(() => {
+    navigator.clipboard.writeText(data.product.code);
+    return true;
+  }, false);
 
   return (
     <BookmarkProvider code={data.product.code}>
@@ -86,6 +92,17 @@ export const ProductPage = () => {
                     SKU:
                   </Text>{" "}
                   {data.product.code}
+                  <IconButton
+                    aria-label="Copy"
+                    icon={
+                      <Icon
+                        as={BiClipboard}
+                        color={copied ? "teal.300" : undefined}
+                      />
+                    }
+                    onClick={copy}
+                    bg="inherit"
+                  />
                 </ListItem>
                 <ListItem>
                   <Text as={"span"} fontWeight={"bold"}>
