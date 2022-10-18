@@ -16,8 +16,9 @@ import { ProgressBar } from "~/components/ProgressBar";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
-  title: "Power plant 2",
+  title: "PP2",
   viewport: "width=device-width,initial-scale=1",
+  robots: "noindex,nofollow",
 });
 
 export let links: LinksFunction = () => {
@@ -75,6 +76,7 @@ const Document = withEmotionCache(
               dangerouslySetInnerHTML={{ __html: css }}
             />
           ))}
+          <Favicon />
         </head>
         <body>
           {children}
@@ -87,6 +89,22 @@ const Document = withEmotionCache(
     );
   }
 );
+
+const Favicon = () => {
+  return (
+    <>
+      <link
+        rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2250%%22 y=%2250%%22 style=%22dominant-baseline:central;text-anchor:middle;font-size:90px;%22>🔥</text></svg>"
+      />
+      <link
+        rel="icon alternate"
+        type="image/png"
+        href="https://twemoji.maxcdn.com/v/14.0.2/72x72/1f525.png"
+      />
+    </>
+  );
+};
 
 export default function App() {
   return (
