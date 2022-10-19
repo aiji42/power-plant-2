@@ -39,7 +39,12 @@ export const MediaButton = ({
   const { bookmark } = useBookmarkProvider();
 
   return (
-    <Popover isOpen={isOpen} onOpen={onOpen} onClose={onClose} placement="auto">
+    <Popover
+      isOpen={isOpen}
+      onOpen={onOpen}
+      onClose={onClose}
+      placement="bottom"
+    >
       <PopoverTrigger>
         <Box {...props}>
           <Avatar

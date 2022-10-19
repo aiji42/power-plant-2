@@ -55,7 +55,12 @@ export const DownloadButton = ({
   const { onOpen, onClose, isOpen } = useDisclosure();
 
   return (
-    <Popover isOpen={isOpen} onOpen={onOpen} onClose={onClose} placement="auto">
+    <Popover
+      isOpen={isOpen}
+      onOpen={onOpen}
+      onClose={onClose}
+      placement="bottom"
+    >
       <PopoverTrigger>
         <Box {...props}>
           <IconButton
