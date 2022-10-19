@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { loader } from "~/routes/__authed/product.$code";
 import { BookmarkButton } from "~/components/BookmarkButton";
-import { BiLinkExternal, BiClipboard } from "react-icons/bi";
+import { BiLinkExternal, BiClipboard, BiCheck } from "react-icons/bi";
 import { DownloadButton } from "~/components/DownloadButton";
 import { Casts } from "~/components/Casts";
 import {
@@ -95,7 +95,7 @@ export const ProductPage = () => {
                     aria-label="Copy"
                     icon={
                       <Icon
-                        as={BiClipboard}
+                        as={copied ? BiCheck : BiClipboard}
                         color={copied ? "teal.300" : undefined}
                       />
                     }
