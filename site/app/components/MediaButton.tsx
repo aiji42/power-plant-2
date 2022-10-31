@@ -18,18 +18,14 @@ import {
   MenuList,
   MenuItem,
 } from "@chakra-ui/react";
-import {
-  BiPlayCircle,
-  BiTrash,
-  BiPlay,
-  BiDotsHorizontalRounded,
-} from "react-icons/bi";
+import { BiPlayCircle, BiTrash, BiDotsHorizontalRounded } from "react-icons/bi";
 import { FaCompressArrowsAlt } from "react-icons/fa";
 import { FocusLock } from "@chakra-ui/focus-lock";
 import { useBookmarkProvider } from "~/components/BookmarkProvider";
 import humanFormat from "human-format";
-import { ComponentProps, useReducer, useRef } from "react";
+import { ComponentProps, useReducer } from "react";
 import { Alert } from "~/components/Alert";
+import { PlayButton } from "~/components/PlayButton";
 
 export const MediaButton = ({
   sample,
@@ -158,22 +154,5 @@ const Sample = ({ sample }: { sample: string }) => {
       <Spacer />
       <PlayButton src={sample} />
     </Flex>
-  );
-};
-
-const PlayButton = ({ src }: { src: string }) => {
-  const ref = useRef<HTMLVideoElement>(null);
-
-  return (
-    <>
-      <video src={src} style={{ width: 0, height: 0 }} controls ref={ref} />
-      <IconButton
-        rounded="3xl"
-        aria-label="Play"
-        fontSize="2xl"
-        icon={<BiPlay />}
-        onClick={() => ref.current?.play()}
-      />
-    </>
   );
 };

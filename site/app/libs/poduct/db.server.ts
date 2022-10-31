@@ -6,6 +6,7 @@ export const productFromDb = async (code: string): Promise<Product | null> => {
   if (!product) return null;
   return {
     imageUrls: product.imageUrls,
+    media: product.medias[0]?.url,
     title: product.title,
     code: product.code,
     releasedAt: product.releasedAt?.toISOString().slice(0, 10),
