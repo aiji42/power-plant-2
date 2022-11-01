@@ -5,8 +5,10 @@ import { BiPlay } from "react-icons/bi";
 export const PlayButton = ({
   src,
   ...props
-}: { src: string } & Partial<IconButtonProps>) => {
+}: { src?: string } & Partial<IconButtonProps>) => {
   const ref = useRef<HTMLVideoElement>(null);
+
+  if (!src) return null;
 
   return (
     <>

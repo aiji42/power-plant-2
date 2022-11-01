@@ -31,6 +31,7 @@ import { PlayButton } from "~/components/PlayButton";
 
 export const ProductPage = () => {
   const data = useLoaderData<typeof loader>();
+  const { bookmark } = useBookmarkProvider();
   const [showFull, toggle] = useReducer((s) => !s, false);
   const [copied, copy] = useReducer(() => {
     navigator.clipboard.writeText(data.product.code);
@@ -52,30 +53,28 @@ export const ProductPage = () => {
               h="320px"
               objectPosition={"right top"}
             />
-            {(data.product.media ?? data.product.sample) && (
-              <Box
-                position="absolute"
-                h={16}
-                w={16}
-                top={0}
-                bottom={0}
-                left={0}
-                right={0}
-                margin="auto"
-              >
-                <PlayButton
-                  w="100%"
-                  h="100%"
-                  fontSize={88}
-                  shadow="md"
-                  rounded="full"
-                  color="telegram.200"
-                  backdropFilter="auto"
-                  backdropBlur="4px"
-                  src={data.product.media ?? data.product.sample ?? ""}
-                />
-              </Box>
-            )}
+            <Box
+              position="absolute"
+              h={16}
+              w={16}
+              top={0}
+              bottom={0}
+              left={0}
+              right={0}
+              margin="auto"
+            >
+              <PlayButton
+                w="100%"
+                h="100%"
+                fontSize={88}
+                shadow="md"
+                rounded="full"
+                color="telegram.200"
+                backdropFilter="auto"
+                backdropBlur="4px"
+                src={bookmark?.medias?.[0].url ?? data.product.sample}
+              />
+            </Box>
           </Box>
           <Stack my={6} px={4} spacing={3}>
             <Flex>
