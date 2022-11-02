@@ -10,14 +10,18 @@ export type SearchedResult = {
   completed: string;
 };
 
-export const searchLinks = async (
-  keyword: string
-): Promise<SearchedResult[]> => {
+export const makeSearchUrl = (keyword: string) => {
   const url = new URL(process.env.TORRENT_SEARCH_ENDPOINT!);
   url.searchParams.append("q", keyword);
   url.searchParams.append("f", "0");
   url.searchParams.append("c", "0_0");
-  const res = await fetch(url);
+  return url;
+};
+
+export const searchLinks = async (
+  keyword: string
+): Promise<SearchedResult[]> => {
+  const res = await fetch(makeSearchUrl(keyword));
   const html = await res.text();
   const root = parse(html);
   const trs = root.querySelectorAll("tr.default, tr.success");

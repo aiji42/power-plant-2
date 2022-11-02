@@ -6,7 +6,7 @@ import { SearchedResult, searchLinks } from "~/libs/torrent/searchLinks";
 
 export const loader = async ({ params }: DataFunctionArgs) => {
   const { code } = params as RouteParams["/api/torrent/:code"];
-  const items = (await Promise.all(formatter(code).map(searchLinks)))
+  const items = (await Promise.all(formatter(code.trim()).map(searchLinks)))
     .flat()
     .reduce<SearchedResult[]>((res, item) => {
       return res.some(({ link }) => link === item.link) ? res : [...res, item];
