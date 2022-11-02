@@ -24,6 +24,9 @@ export const Toolbar = () => {
     (s: string, e: ChangeEvent<HTMLInputElement>) => e.target.value,
     ""
   );
+  const action = value.trim().match(/^[a-zA-Z0-9-_]+$/)
+    ? route("/product/:code", { code: value.trim() })
+    : route("/cast/:cast", { cast: value.trim() });
 
   return (
     <Box
@@ -38,10 +41,7 @@ export const Toolbar = () => {
       zIndex={10}
     >
       <Flex justify="space-between">
-        <form
-          action={route("/product/:code", { code: value })}
-          style={{ display: "contents" }}
-        >
+        <form action={action} style={{ display: "contents" }}>
           <Input
             ref={ref}
             w={expand ? 48 : 0}
