@@ -31,7 +31,6 @@ import { PlayButton } from "~/components/PlayButton";
 
 export const ProductPage = () => {
   const data = useLoaderData<typeof loader>();
-  const { bookmark } = useBookmarkProvider();
   const [showFull, toggle] = useReducer((s) => !s, false);
   const [copied, copy] = useReducer(() => {
     navigator.clipboard.writeText(data.product.code);
@@ -63,17 +62,7 @@ export const ProductPage = () => {
               right={0}
               margin="auto"
             >
-              <PlayButton
-                w="100%"
-                h="100%"
-                fontSize={88}
-                shadow="md"
-                rounded="full"
-                color="telegram.200"
-                backdropFilter="auto"
-                backdropBlur="4px"
-                src={bookmark?.medias?.[0].url ?? data.product.sample}
-              />
+              <LargePlayButton />
             </Box>
           </Box>
           <Stack my={6} px={4} spacing={3}>
@@ -191,5 +180,24 @@ const SwipeBeside = ({ children }: { children: ReactNode }) => {
     >
       {children}
     </SwipeBesideNavi>
+  );
+};
+
+const LargePlayButton = () => {
+  const data = useLoaderData<typeof loader>();
+  const { bookmark } = useBookmarkProvider();
+
+  return (
+    <PlayButton
+      w="100%"
+      h="100%"
+      fontSize={88}
+      shadow="md"
+      rounded="full"
+      color="telegram.200"
+      backdropFilter="auto"
+      backdropBlur="4px"
+      src={bookmark?.medias?.[0].url ?? data.product.sample}
+    />
   );
 };
