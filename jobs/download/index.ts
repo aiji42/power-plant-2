@@ -84,7 +84,10 @@ const download = async (
   dir: string,
   minSize: number
 ): Promise<string[]> => {
-  await $`aria2c -d ${dir} --seed-time=0 --max-overall-upload-limit=1K ${url}`;
+  if (url.endsWith("m3u8"))
+    await $`ffmpeg -i ${url} -bsf:a aac_adtstoasc -c copy ${dir}/video.mp4`;
+  else
+    await $`aria2c -d ${dir} --seed-time=0 --max-overall-upload-limit=1K ${url}`;
 
   return listFiles(dir).filter(
     (filePath) => fs.statSync(filePath).size > minSize
