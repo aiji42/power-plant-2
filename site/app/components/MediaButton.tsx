@@ -18,7 +18,12 @@ import {
   MenuList,
   MenuItem,
 } from "@chakra-ui/react";
-import { BiPlayCircle, BiTrash, BiDotsHorizontalRounded } from "react-icons/bi";
+import {
+  BiPlayCircle,
+  BiTrash,
+  BiDotsHorizontalRounded,
+  BiClipboard,
+} from "react-icons/bi";
 import { FaCompressArrowsAlt } from "react-icons/fa";
 import { FocusLock } from "@chakra-ui/focus-lock";
 import { useBookmarkProvider } from "~/components/BookmarkProvider";
@@ -128,6 +133,12 @@ const Media = ({
               onClick={() => buttonHandler("compress")}
             >
               Compress
+            </MenuItem>
+            <MenuItem
+              icon={<BiClipboard />}
+              onClick={() => navigator.clipboard.writeText(media.url)}
+            >
+              Copy url
             </MenuItem>
           </MenuList>
         </Menu>
