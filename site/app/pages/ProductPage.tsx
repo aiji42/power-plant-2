@@ -197,7 +197,7 @@ const LargePlayButton = () => {
       color="telegram.200"
       backdropFilter="auto"
       backdropBlur="4px"
-      src={bookmark?.medias?.[0].url ?? data.product.sample}
+      src={bookmark?.medias?.[0]?.url ?? data.product.sample}
     />
   );
 };
