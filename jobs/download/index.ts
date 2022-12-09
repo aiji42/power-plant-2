@@ -97,7 +97,7 @@ const convertToHLS = async (file: string, prefix: string): Promise<string> => {
   const movedFile = `${prefix}/video${path.extname(file)}}`;
   await $`mv ${file} ${movedFile}`;
 
-  await $`ffmpeg -i ${movedFile} -c:v copy -c:a copy -f hls -hls_time 30 -hls_playlist_type vod -hls_segment_filename "${prefix}/video%4d.ts" ${prefix}/video.m3u8`;
+  await $`ffmpeg -i ${movedFile} -c:v copy -c:a copy -f hls -hls_time 6 -hls_playlist_type vod -hls_segment_filename "${prefix}/video%4d.ts" ${prefix}/video.m3u8`;
 
   await $`rm -f ${movedFile}`;
 
