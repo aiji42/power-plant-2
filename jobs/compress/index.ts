@@ -110,8 +110,6 @@ const convertToHLS = async (file: string, prefix: string): Promise<string> => {
 };
 
 const uploadToStorage = async (prefix: string) => {
-  // https://developers.cloudflare.com/r2/data-access/s3-api/api/#implemented-object-level-operations
-  await $`aws configure set default.s3.max_concurrent_requests 2`;
   await $`aws s3 sync --endpoint-url https://${process.env.R2_CLIENT_ID}.r2.cloudflarestorage.com ${prefix} s3://${BUCKET}/${prefix}`;
 };
 
