@@ -2,7 +2,7 @@ import fastify from "fastify";
 import { $ } from "zx";
 import {
   S3Client,
-  DeleteObjectCommand,
+  DeleteObjectsCommand,
   ListObjectsV2Command,
 } from "@aws-sdk/client-s3";
 import * as path from "path";
@@ -72,23 +72,27 @@ app.post("/media", async (request, reply) => {
     }
   >;
   if (data.type === "DELETE" && data.table === "Media") {
-    const res = await S3.send(
-      new ListObjectsV2Command({
-        Bucket: data.old_record.bucket,
-        Prefix: `${path.dirname(data.old_record.key)}/`,
-      })
-    );
-
-    for (let content of res.Contents) {
-      await S3.send(
-        new DeleteObjectCommand({
+    const removeObjects = async (continuationToken?: string) => {
+      const res = await S3.send(
+        new ListObjectsV2Command({
           Bucket: data.old_record.bucket,
-          Key: content.Key,
+          Prefix: `${path.dirname(data.old_record.key)}/`,
+          ContinuationToken: continuationToken,
         })
       );
-    }
+
+      await S3.send(
+        new DeleteObjectsCommand({
+          Bucket: data.old_record.bucket,
+          Delete: { Objects: res.Contents.map(({ Key }) => ({ Key })) },
+        })
+      );
+      if (res.NextContinuationToken)
+        return removeObjects(res.NextContinuationToken);
+    };
+    await removeObjects();
     reply.code(200).send({ message: `deleted media ${data.old_record.url}` });
   }
 });
 
-app.listen(process.env.PORT || 3000, "0.0.0.0");
+app.listen({ port: Number(process.env.PORT || 3000), host: "0.0.0.0" });
