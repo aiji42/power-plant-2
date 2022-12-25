@@ -4,14 +4,14 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.178.0",
-    "fastify": "^4.6.0",
-    "zx": "^7.0.8"
+    "@aws-sdk/client-s3": "^3.238.0",
+    "fastify": "^4.10.2",
+    "zx": "^7.1.1"
   },
   "devDependencies": {
-    "@types/node": "^18.7.18",
-    "tsx": "^3.9.0",
-    "typescript": "^4.8.3"
+    "@types/node": "^18.11.17",
+    "tsx": "^3.12.1",
+    "typescript": "^4.9.4"
   },
   "engines": {
     "node": "16.x"
