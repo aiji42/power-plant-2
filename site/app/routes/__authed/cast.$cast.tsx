@@ -1,6 +1,6 @@
 import { DataFunctionArgs, json } from "@remix-run/node";
 import { RouteParams } from "routes-gen";
-import { cacheHeaders } from "~/libs/cache/cache.server";
+import { cacheHeaders } from "~/libs/cache/cache";
 import { searchCastUrls, searchFromFan } from "~/libs/casts/casts";
 import { productsFromDB } from "~/libs/products/db.server";
 import { makeSearchUrl } from "~/libs/torrent/searchLinks";
@@ -22,4 +22,4 @@ export const loader = async ({ params }: DataFunctionArgs) => {
   );
 };
 
-export { headers } from "~/libs/cache/cache.server";
+export { headers } from "~/libs/cache/cache";

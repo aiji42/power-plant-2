@@ -9,7 +9,6 @@ import { useFetcher } from "@remix-run/react";
 import { SerializeFrom } from "@remix-run/node";
 import { loader as bookmarkLoader } from "~/routes/__authed/api/bookmark.$code";
 import { route } from "routes-gen";
-import { clearInterval } from "timers";
 
 const Context = createContext<
   SerializeFrom<typeof bookmarkLoader> & {

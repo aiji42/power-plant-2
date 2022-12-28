@@ -1,7 +1,7 @@
 import { DataFunctionArgs, json, redirect } from "@remix-run/node";
 import { route, RouteParams } from "routes-gen";
 import { productFromMGS } from "~/libs/poduct/mgs.server";
-import { cacheHeaders } from "~/libs/cache/cache.server";
+import { cacheHeaders } from "~/libs/cache/cache";
 import { productFromFAN } from "~/libs/poduct/fan.server";
 import { productFromDb } from "~/libs/poduct/db.server";
 export { ProductPage as default } from "~/pages/ProductPage";
@@ -30,4 +30,4 @@ export const loader = async ({ params }: DataFunctionArgs) => {
   );
 };
 
-export { headers } from "~/libs/cache/cache.server";
+export { headers } from "~/libs/cache/cache";
