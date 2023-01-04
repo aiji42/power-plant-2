@@ -9,7 +9,7 @@
           "memoryMib": "1024"
         },
         "maxRetryCount": 0,
-        "maxRunDuration": "3600s",
+        "maxRunDuration": "5400s",
         "runnables": [
           {
             "container": {

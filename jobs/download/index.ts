@@ -1,11 +1,11 @@
-import { $, fs, path } from "zx";
+import { $, fs, path, log, LogEntry } from "zx";
 import ffprobe from "ffprobe";
 import { PrismaClient, TaskStatus, DownloadTask } from "@prisma/client";
 
 const prisma = new PrismaClient({ log: ["info", "warn", "error"] });
 
 const MIN_SIZE = 200 * 1024 * 1024; // 200M
-const DOWNLOAD_TIMEOUT = 30 * 60 * 1000; // 30min
+const DOWNLOAD_TIMEOUT = 3600 * 1000; // 1h
 const DOWNLOAD_DIR = "/downloads";
 const BUCKET = "power-plant-2";
 
@@ -42,7 +42,7 @@ const getTaskAndStart = async () => {
   });
   if (!task) return null;
 
-  return await prisma.downloadTask.update({
+  return prisma.downloadTask.update({
     where: { id: task.id },
     data: {
       status: TaskStatus.Running,
@@ -62,7 +62,19 @@ const complete = (id: string) => {
   });
 };
 
-const failed = (id: string, e: Error) => {
+const failedOrCanceled = async (id: string, e: Error) => {
+  const task = await prisma.downloadTask.findUniqueOrThrow({
+    where: { id },
+  });
+  if (task.status === TaskStatus.Canceled) {
+    return prisma.downloadTask.update({
+      where: { id },
+      data: {
+        stoppedAt: new Date(),
+        message: e.message,
+      },
+    });
+  }
   return prisma.downloadTask.update({
     where: { id },
     data: {
@@ -79,7 +91,61 @@ const timeout = async (time: number): Promise<string[]> => {
   });
 };
 
+const monitoringCancel = async (taskId: string): Promise<string[]> => {
+  return new Promise((...[, reject]) => {
+    setInterval(async () => {
+      const canceled = await prisma.downloadTask.findFirst({
+        where: { id: taskId, status: TaskStatus.Canceled },
+      });
+      if (canceled) reject(new Error("canceled"));
+    }, 10000);
+  });
+};
+
+const handleAria2cLog = (taskId: string) => {
+  const startAt = new Date().getTime();
+  const progress: {
+    downloaded: string;
+    rate: string;
+    connections: string;
+    speed: string;
+    expects: string;
+    duration: number;
+  }[] = [];
+
+  return (entry: LogEntry) => {
+    if (entry.kind === "stdout") {
+      const logText = entry.data.toString();
+      if (logText.includes("Download Progress Summary")) {
+        const [, downloaded, , rate, connections, , speed, , , expects] =
+          logText.match(
+            /\s([0-9.GM]+i?B)\/([0-9.GM]+i?B)\((\d+%)\)\sCN:(\d+)\sSD:(\d+)\sDL:([0-9.GMK]+i?B)(\sUL:[0-9.()GMKiB]+)?(\sETA:(\d[0-9dhms]+))?/
+          ) ?? [];
+        progress.push({
+          downloaded,
+          rate,
+          connections,
+          speed,
+          expects,
+          duration: (new Date().getTime() - startAt) / 1000,
+        });
+
+        prisma.downloadTask
+          .update({
+            where: { id: taskId },
+            data: {
+              progress,
+            },
+          })
+          .then();
+      }
+    }
+    log(entry);
+  };
+};
+
 const download = async (
+  taskId: string,
   url: string,
   dir: string,
   minSize: number
@@ -87,8 +153,11 @@ const download = async (
   if (url.endsWith("m3u8")) {
     $`mkdir -p ${dir}`;
     await $`ffmpeg -i ${url} -bsf:a aac_adtstoasc -c copy ${dir}/video.mp4`;
-  } else
-    await $`aria2c -d ${dir} --seed-time=0 --max-overall-upload-limit=1K ${url}`;
+  } else {
+    $.log = handleAria2cLog(taskId);
+    await $`aria2c -d ${dir} --seed-time=0 --max-overall-upload-limit=1K --show-console-readout=false --summary-interval=60 ${url}`;
+    $.log = log;
+  }
 
   return listFiles(dir).filter(
     (filePath) => fs.statSync(filePath).size > minSize
@@ -116,7 +185,7 @@ const saveDbAsMedia = async (
   url: string,
   key: string,
   size: string,
-  meta: Record<string, string | number>,
+  meta: Record<string, string | number | null>,
   job: DownloadTask
 ) => {
   await prisma.media.create({
@@ -148,8 +217,9 @@ const main = async () => {
 
   try {
     const fileNames = await Promise.race([
-      download(task.targetUrl, DOWNLOAD_DIR, MIN_SIZE),
+      download(task.id, task.targetUrl, DOWNLOAD_DIR, MIN_SIZE),
       timeout(DOWNLOAD_TIMEOUT),
+      monitoringCancel(task.id),
     ]);
 
     for (let orgFile of fileNames) {
@@ -167,7 +237,7 @@ const main = async () => {
     }
     await complete(task.id);
   } catch (e) {
-    await failed(task.id, e);
+    if (e instanceof Error) await failedOrCanceled(task.id, e);
     throw e;
   }
 };

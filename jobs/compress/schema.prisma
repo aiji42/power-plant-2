@@ -70,6 +70,7 @@ model DownloadTask {
   stoppedAt DateTime?
   status    TaskStatus @default(Waiting)
   message   String?
+  progress  Json?
   targetUrl String
 }
 
@@ -92,4 +93,5 @@ enum TaskStatus {
   Running
   Completed
   Failed
+  Canceled
 }
