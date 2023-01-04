@@ -121,23 +121,25 @@ const handleAria2cLog = (taskId: string) => {
           logText.match(
             /\s([0-9.GM]+i?B)\/([0-9.GM]+i?B)\((\d+%)\)\sCN:(\d+)\sSD:(\d+)\sDL:([0-9.GMK]+i?B)(\sUL:[0-9.()GMKiB]+)?(\sETA:(\d[0-9dhms]+))?/
           ) ?? [];
-        progress.push({
-          downloaded,
-          rate,
-          connections,
-          speed,
-          expects,
-          duration: (new Date().getTime() - startAt) / 1000,
-        });
+        if (rate) {
+          progress.push({
+            downloaded,
+            rate,
+            connections,
+            speed,
+            expects,
+            duration: (new Date().getTime() - startAt) / 1000,
+          });
 
-        prisma.downloadTask
-          .update({
-            where: { id: taskId },
-            data: {
-              progress,
-            },
-          })
-          .then();
+          prisma.downloadTask
+            .update({
+              where: { id: taskId },
+              data: {
+                progress,
+              },
+            })
+            .then();
+        }
       }
     }
     log(entry);

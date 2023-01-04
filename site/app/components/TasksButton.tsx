@@ -68,6 +68,7 @@ type Progress = {
   rate: string;
   speed: string;
   expects: string;
+  connections: string;
 }[];
 
 const TasksPanel = () => {
@@ -100,16 +101,21 @@ const TasksPanel = () => {
                     <br />
                     speed: {(task.progress as Progress).at(-1)?.speed}
                     <br />
+                    connect: {(task.progress as Progress).at(-1)?.connections}
+                    <br />
                     expects: {(task.progress as Progress).at(-1)?.expects}
                   </>
                 )}
               {"progress" in task && task.status === "Running" && (
-                <Button
-                  colorScheme="red"
-                  onClick={() => handlers.cancelDownloadTask(task.id)}
-                >
-                  Cancel
-                </Button>
+                <>
+                  <br />
+                  <Button
+                    colorScheme="red"
+                    onClick={() => handlers.cancelDownloadTask(task.id)}
+                  >
+                    Cancel
+                  </Button>
+                </>
               )}
               {task.stoppedAt && (
                 <>

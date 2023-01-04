@@ -6,26 +6,34 @@ import {
   LineElement,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import { useMemo } from "react";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement);
 
 export const Chart = ({
   data,
 }: {
-  data: { duration: number; rate: string }[];
+  data: { duration: number; rate?: string }[];
 }) => {
+  const samples = useMemo(
+    () =>
+      data.reduce<number[]>((res, { rate }) => {
+        if (!rate) return res;
+        return [...res, Number(rate.replace("%", ""))];
+      }, []),
+    [data]
+  );
+
   return (
     <Line
       options={{
         responsive: true,
       }}
       data={{
-        labels: data.map((_, i) => i),
+        labels: samples.map((_, i) => i),
         datasets: [
           {
-            data: data.map(({ duration, rate }) =>
-              Number(rate.replace("%", ""))
-            ),
+            data: samples,
             borderColor: "rgb(53, 162, 235)",
             backgroundColor: "rgba(53, 162, 235, 0.5)",
           },
