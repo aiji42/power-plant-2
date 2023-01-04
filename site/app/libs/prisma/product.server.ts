@@ -23,7 +23,7 @@ export const createProduct = async (code: string) => {
   const data = mgs ?? fan;
   if (!data) throw new Error();
 
-  return await prisma.product.create({
+  return prisma.product.create({
     data: {
       code,
       title: data.title,
