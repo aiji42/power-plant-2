@@ -14,6 +14,7 @@ const Context = createContext<
   SerializeFrom<typeof bookmarkLoader> & {
     handlers: {
       addDownloadTask: (url: string) => void;
+      cancelDownloadTask: (id: string) => void;
       addCompressTask: (mediaId: string) => void;
       addBookmark: () => void;
       deleteBookmark: () => void;
@@ -31,6 +32,7 @@ const Context = createContext<
   randomCode: "",
   handlers: {
     addDownloadTask: () => {},
+    cancelDownloadTask: () => {},
     addCompressTask: () => {},
     addBookmark: () => {},
     deleteBookmark: () => {},
@@ -61,6 +63,15 @@ export const BookmarkProvider = ({
     (url: string) => {
       fetcher.submit(
         { action: "addDownloadTask", url },
+        { action, method: "patch" }
+      );
+    },
+    [fetcher.submit, action]
+  );
+  const cancelDownloadTask = useCallback(
+    (id: string) => {
+      fetcher.submit(
+        { action: "cancelDownloadTask", id },
         { action, method: "patch" }
       );
     },
@@ -156,6 +167,7 @@ export const BookmarkProvider = ({
         randomCode: fetcher.data?.randomCode ?? "",
         handlers: {
           addDownloadTask,
+          cancelDownloadTask,
           addCompressTask,
           addBookmark,
           deleteBookmark,

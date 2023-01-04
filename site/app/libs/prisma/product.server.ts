@@ -1,9 +1,10 @@
 import { prisma } from "~/libs/prisma/client.server";
 import { productFromMGS } from "~/libs/poduct/mgs.server";
 import { productFromFAN } from "~/libs/poduct/fan.server";
+import { TaskStatus } from "@prisma/client";
 
 export const getProductData = async (code: string) => {
-  return await prisma.product.findUnique({
+  return prisma.product.findUnique({
     where: { code },
     include: {
       casts: { select: { name: true, _count: { select: { products: true } } } },
@@ -51,6 +52,15 @@ export const createDownloadTask = async (code: string, url: string) => {
           targetUrl: url,
         },
       },
+    },
+  });
+};
+
+export const cancelDownloadTask = async (id: string) => {
+  await prisma.downloadTask.update({
+    where: { id },
+    data: {
+      status: TaskStatus.Canceled,
     },
   });
 };

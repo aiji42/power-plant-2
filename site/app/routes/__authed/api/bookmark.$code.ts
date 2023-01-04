@@ -11,6 +11,7 @@ import {
   createCompressTask,
   getCodeByRandom,
   addMedia,
+  cancelDownloadTask,
 } from "~/libs/prisma/product.server";
 import { getSignedUploadUrl } from "~/libs/r2/upload.server";
 
@@ -42,6 +43,11 @@ export const action = async ({ params, request }: DataFunctionArgs) => {
       const url = data.get("url");
       if (typeof url !== "string") throw new Error("invalid data");
       await createDownloadTask(code, url);
+    }
+    if (data.get("action") === "cancelDownloadTask") {
+      const id = data.get("id");
+      if (typeof id !== "string") throw new Error("invalid data");
+      await cancelDownloadTask(id);
     }
     if (data.get("action") === "addCompressTask") {
       const mediaId = data.get("mediaId");
