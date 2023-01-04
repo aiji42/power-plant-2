@@ -23,6 +23,7 @@ import {
   Flex,
   Input,
   IconButton,
+  Button,
 } from "@chakra-ui/react";
 import { useFetcher } from "@remix-run/react";
 import { SerializeFrom } from "@remix-run/node";
@@ -33,6 +34,8 @@ import {
   ReactElement,
   useEffect,
   useReducer,
+  useRef,
+  useState,
 } from "react";
 import { route } from "routes-gen";
 import {
@@ -79,6 +82,7 @@ export const DownloadButton = ({
             <TabList>
               <Tab>Links</Tab>
               <Tab>Manual</Tab>
+              <Tab>Upload</Tab>
             </TabList>
 
             <TabPanels>
@@ -87,6 +91,9 @@ export const DownloadButton = ({
               </TabPanel>
               <TabPanel>
                 <ManualLinkPanel />
+              </TabPanel>
+              <TabPanel>
+                <DirectUploadPanel onComplete={onClose} />
               </TabPanel>
             </TabPanels>
           </Tabs>
@@ -166,6 +173,62 @@ const ManualLinkPanel = () => {
         />
       </DownloadConfirm>
     </Flex>
+  );
+};
+
+const DirectUploadPanel = ({ onComplete }: { onComplete?: VoidFunction }) => {
+  const { isBookmarking, handlers, signedUploadUrl } = useBookmarkProvider();
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const fileName = useRef("");
+  const [isLoading, setLoading] = useState(false);
+
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const [file] = e.target.files ?? [];
+    if (file && isBookmarking) {
+      setPreviewUrl(URL.createObjectURL(file));
+      const [ext] = file.name.split(".").slice(-1);
+      fileName.current = `${new Date().getTime()}.${ext}`;
+      handlers.uploadFileDirect(fileName.current);
+    }
+  };
+
+  const upload = async () => {
+    const [file] = fileRef.current?.files ?? [];
+    if (!file || !signedUploadUrl || !fileName.current) return;
+
+    setLoading(true);
+    await fetch(signedUploadUrl, {
+      headers: { "Content-Type": file.type },
+      method: "PUT",
+      body: file,
+    });
+    handlers.addMedia({ name: fileName.current, size: String(file.size) });
+    setLoading(false);
+    onComplete?.();
+  };
+
+  return (
+    <>
+      <input type="file" onChange={onChange} ref={fileRef} accept="video/*" />
+      {previewUrl && (
+        <Box my={2}>
+          <video src={previewUrl} controls />
+        </Box>
+      )}
+      {signedUploadUrl && (
+        <Flex justify="flex-end">
+          <Button
+            disabled={isLoading}
+            onClick={upload}
+            colorScheme="teal"
+            isLoading={isLoading}
+          >
+            Upload
+          </Button>
+        </Flex>
+      )}
+    </>
   );
 };
 

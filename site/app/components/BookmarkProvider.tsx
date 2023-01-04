@@ -20,6 +20,8 @@ const Context = createContext<
       deleteMedia: (id: string) => void;
       connectCast: (name: string) => void;
       disconnectCast: (name: string) => void;
+      uploadFileDirect: (name: string) => void;
+      addMedia: (info: { name: string; size: string }) => void;
     };
     isBookmarking: boolean;
     optimist: boolean;
@@ -35,8 +37,11 @@ const Context = createContext<
     deleteMedia: () => {},
     connectCast: () => {},
     disconnectCast: () => {},
+    uploadFileDirect: () => {},
+    addMedia: () => {},
   },
   isBookmarking: false,
+  signedUploadUrl: "",
   optimist: false,
 });
 
@@ -97,6 +102,24 @@ export const BookmarkProvider = ({
     },
     [fetcher.submit, action]
   );
+  const uploadFileDirect = useCallback(
+    (name: string) => {
+      fetcher.submit(
+        { action: "uploadFileDirect", name },
+        { action, method: "patch" }
+      );
+    },
+    [fetcher.submit, action]
+  );
+  const addMedia = useCallback(
+    (info: { name: string; size: string }) => {
+      fetcher.submit(
+        { action: "addMedia", ...info },
+        { action, method: "patch" }
+      );
+    },
+    [fetcher.submit, action]
+  );
   const addBookmark = useCallback(() => {
     fetcher.submit({}, { action, method: "post" });
   }, [fetcher.submit, action]);
@@ -139,6 +162,8 @@ export const BookmarkProvider = ({
           deleteMedia,
           connectCast,
           disconnectCast,
+          uploadFileDirect,
+          addMedia,
         },
         isBookmarking:
           fetcher.submission?.method === "POST"
@@ -146,6 +171,7 @@ export const BookmarkProvider = ({
             : fetcher.submission?.method === "DELETE"
             ? false
             : !!fetcher.data?.bookmark,
+        signedUploadUrl: fetcher.data?.signedUploadUrl ?? "",
         optimist: fetcher.state !== "idle",
       }}
     >

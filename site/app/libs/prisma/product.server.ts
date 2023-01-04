@@ -68,6 +68,27 @@ export const createCompressTask = async (code: string, mediaId: string) => {
   });
 };
 
+export const addMedia = async (
+  code: string,
+  { name, size }: { name: string; size: string }
+) => {
+  const key = `${code}/${name}`;
+  await prisma.product.update({
+    where: { code },
+    data: {
+      medias: {
+        create: {
+          url: `${process.env.R2_PUBLIC_URL}/${key}`,
+          size,
+          key,
+          meta: {},
+          bucket: process.env.BUCKET_NAME!,
+        },
+      },
+    },
+  });
+};
+
 export const deleteMedia = async (id: string) => {
   await prisma.media.delete({ where: { id } });
 };

@@ -110,8 +110,16 @@ const Media = ({
     <>
       <Flex gap={2} my={4}>
         <Text w="full" fontSize="sm" py={2} px={1}>
-          {humanFormat(Number(media.size), { unit: "B" })} | {meta.width}x
-          {meta.height} | {Math.floor(Number(meta.duration) / 60)}m
+          {[
+            humanFormat(Number(media.size), { unit: "B" }),
+            meta.height && meta.width
+              ? `${meta.width}x
+          ${meta.height}`
+              : null,
+            meta.duration ? `${Math.floor(Number(meta.duration) / 60)}m` : null,
+          ]
+            .filter(Boolean)
+            .join(" | ")}
         </Text>
         <Menu>
           <MenuButton

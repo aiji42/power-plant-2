@@ -10,7 +10,9 @@ import {
   disconnectCast,
   createCompressTask,
   getCodeByRandom,
+  addMedia,
 } from "~/libs/prisma/product.server";
+import { getSignedUploadUrl } from "~/libs/r2/upload.server";
 
 export const loader = async ({ params }: DataFunctionArgs) => {
   const { code } = params as RouteParams["/api/bookmark/:code"];
@@ -21,11 +23,13 @@ export const loader = async ({ params }: DataFunctionArgs) => {
   return json({
     bookmark,
     randomCode: bookmark ? randomCode : "",
+    signedUploadUrl: "",
   });
 };
 
 export const action = async ({ params, request }: DataFunctionArgs) => {
   const { code } = params as RouteParams["/api/bookmark/:code"];
+  let signedUploadUrl = "";
   if (request.method === "POST") {
     await createProduct(code);
   }
@@ -59,9 +63,22 @@ export const action = async ({ params, request }: DataFunctionArgs) => {
       if (typeof name !== "string") throw new Error("invalid data");
       await disconnectCast(code, name);
     }
+    if (data.get("action") === "uploadFileDirect") {
+      const name = data.get("name");
+      if (typeof name !== "string") throw new Error("invalid data");
+      signedUploadUrl = await getSignedUploadUrl(code, name);
+    }
+    if (data.get("action") === "addMedia") {
+      const name = data.get("name");
+      const size = data.get("size");
+      if (typeof name !== "string") throw new Error("invalid data");
+      if (typeof size !== "string") throw new Error("invalid data");
+      await addMedia(code, { name, size });
+    }
   }
 
   return json({
     bookmark: await getProductData(code),
+    signedUploadUrl,
   });
 };
