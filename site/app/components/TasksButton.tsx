@@ -6,23 +6,30 @@ import {
   PopoverArrow,
   PopoverContent,
   PopoverTrigger,
-  Stat,
-  StatHelpText,
-  StatLabel,
   useDisclosure,
   Text,
   AvatarBadge,
   Avatar,
   IconButton,
-  Collapse,
   Button,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
+  Tabs,
+  TableContainer,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
 } from "@chakra-ui/react";
 import { BsListTask } from "react-icons/bs";
 import { FocusLock } from "@chakra-ui/focus-lock";
 import { useBookmarkProvider } from "~/components/BookmarkProvider";
 import { color, icon } from "~/libs/status/utils";
-import { useReducer, Fragment } from "react";
-import { Chart } from "~/components/Chart";
+import dayjs from "dayjs";
 
 export const TaskButton = (props: BoxProps) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
@@ -53,87 +60,178 @@ export const TaskButton = (props: BoxProps) => {
           </Avatar>
         </Box>
       </PopoverTrigger>
-      <PopoverContent p={2}>
+      <PopoverContent p={2} w="100vw">
         <FocusLock persistentFocus={false}>
           <PopoverArrow />
-          <TasksPanel />
+          <Tabs>
+            <TabList>
+              <Tab>
+                <>
+                  Download
+                  {bookmark?.downloadTasks?.[0] ? (
+                    <Icon
+                      as={icon(bookmark.downloadTasks[0].status)}
+                      color={color(bookmark.downloadTasks[0].status)}
+                      ml={1}
+                    />
+                  ) : (
+                    ""
+                  )}
+                </>
+              </Tab>
+              <Tab>
+                <>
+                  Compress
+                  {bookmark?.compressTasks?.[0] ? (
+                    <Icon
+                      as={icon(bookmark.compressTasks[0].status)}
+                      color={color(bookmark.compressTasks[0].status)}
+                      ml={1}
+                    />
+                  ) : (
+                    ""
+                  )}
+                </>
+              </Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel px={0}>
+                <DownloadTaskPanel />
+              </TabPanel>
+              <TabPanel px={0}>
+                <CompressTaskPanel />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
         </FocusLock>
       </PopoverContent>
     </Popover>
   );
 };
 
-type Progress = {
-  duration: number;
-  rate: string;
-  speed: string;
-  expects: string;
-  connections: string;
-}[];
+type Progress =
+  | {
+      duration: number;
+      rate: string;
+      speed: string;
+      expects: string;
+      connections: string;
+    }[]
+  | null;
 
-const TasksPanel = () => {
-  const [showFull, toggle] = useReducer((s) => !s, false);
+const DownloadTaskPanel = () => {
   const { bookmark, handlers } = useBookmarkProvider();
-  const tasks = [
-    ...(bookmark?.downloadTasks ?? []),
-    ...(bookmark?.compressTasks ?? []),
-  ].sort(({ createdAt: a }, { createdAt: b }) => (a > b ? -1 : 1));
+
+  if (!bookmark?.downloadTasks?.[0]) return <Text>No tasks</Text>;
 
   return (
-    <>
-      {tasks.map((task) => (
-        <Fragment key={task.id}>
-          <Stat my={4}>
-            <StatLabel>
-              <Icon as={icon(task.status)} color={color(task.status)} mr={1} />
-              {"mediaId" in task ? "Compress" : "Download"} {task.status}
-            </StatLabel>
-            <StatHelpText>
-              {task.startedAt && (
-                <>started: {new Date(task.startedAt).toLocaleString()}</>
-              )}
-              {"progress" in task &&
-                Array.isArray(task.progress) &&
-                task.progress.length > 0 && (
+    <TableContainer>
+      <Table size="sm">
+        <Thead>
+          <Tr>
+            <Th>Status</Th>
+            <Th>PS</Th>
+            <Th>DL(/s)</Th>
+            <Th>CN</Th>
+            <Th>ETA</Th>
+            <Th>Begin</Th>
+            <Th>Stopped</Th>
+            <Th></Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {bookmark.downloadTasks.map((task) => (
+            <Tr key={task.id}>
+              <Td color={color(task.status)}>{task.status}</Td>
+              <Td>{(task.progress as Progress)?.at(-1)?.rate ?? "-"}</Td>
+              <Td>{(task.progress as Progress)?.at(-1)?.speed ?? "-"}</Td>
+              <Td>{(task.progress as Progress)?.at(-1)?.connections ?? "-"}</Td>
+              <Td>{(task.progress as Progress)?.at(-1)?.expects ?? "-"}</Td>
+              <Td>
+                {task.startedAt ? (
                   <>
+                    {dayjs(task.startedAt).format("YYYY-MM-DD")}
                     <br />
-                    download: {(task.progress as Progress).at(-1)?.rate}
-                    <br />
-                    speed: {(task.progress as Progress).at(-1)?.speed}
-                    <br />
-                    connect: {(task.progress as Progress).at(-1)?.connections}
-                    <br />
-                    expects: {(task.progress as Progress).at(-1)?.expects}
+                    {dayjs(task.startedAt).format("hh:mm")}
                   </>
+                ) : (
+                  "-"
                 )}
-              {"progress" in task && task.status === "Running" && (
-                <>
-                  <br />
+              </Td>
+              <Td>
+                {task.stoppedAt ? (
+                  <>
+                    {dayjs(task.stoppedAt).format("YYYY-MM-DD")}
+                    <br />
+                    {dayjs(task.stoppedAt).format("hh:mm")}
+                  </>
+                ) : (
+                  "-"
+                )}
+              </Td>
+              <Td>
+                {task.status === "Running" && (
                   <Button
                     colorScheme="red"
                     onClick={() => handlers.cancelDownloadTask(task.id)}
                   >
                     Cancel
                   </Button>
-                </>
-              )}
-              {task.stoppedAt && (
-                <>
-                  <br />
-                  stopped: {new Date(task.stoppedAt).toLocaleString()}
-                </>
-              )}
-              <Collapse startingHeight={20} onClick={toggle} in={showFull}>
-                {task.message}
-              </Collapse>
-            </StatHelpText>
-          </Stat>
-          {"progress" in task && Array.isArray(task.progress) && (
-            <Chart data={task.progress as Progress} />
-          )}
-        </Fragment>
-      ))}
-      {(bookmark?.downloadTasks ?? []).length < 1 && <Text>No tasks</Text>}
-    </>
+                )}
+              </Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
+    </TableContainer>
+  );
+};
+
+const CompressTaskPanel = () => {
+  const { bookmark } = useBookmarkProvider();
+
+  if (!bookmark?.compressTasks?.[0]) return <Text>No tasks</Text>;
+
+  return (
+    <TableContainer>
+      <Table size="sm">
+        <Thead>
+          <Tr>
+            <Th>Status</Th>
+            <Th>Begin</Th>
+            <Th>Stopped</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {bookmark.compressTasks.map((task) => (
+            <Tr key={task.id}>
+              <Td color={color(task.status)}>{task.status}</Td>
+              <Td>
+                {task.startedAt ? (
+                  <>
+                    {dayjs(task.startedAt).format("YYYY-MM-DD")}
+                    <br />
+                    {dayjs(task.startedAt).format("hh:mm")}
+                  </>
+                ) : (
+                  "-"
+                )}
+              </Td>
+              <Td>
+                {task.stoppedAt ? (
+                  <>
+                    {dayjs(task.stoppedAt).format("YYYY-MM-DD")}
+                    <br />
+                    {dayjs(task.stoppedAt).format("hh:mm")}
+                  </>
+                ) : (
+                  "-"
+                )}
+              </Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
+    </TableContainer>
   );
 };

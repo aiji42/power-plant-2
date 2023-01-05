@@ -9,7 +9,6 @@ import {
   PopoverTrigger,
   Spinner,
   Stat,
-  StatArrow,
   StatHelpText,
   StatLabel,
   useDisclosure,
@@ -24,6 +23,13 @@ import {
   Input,
   IconButton,
   Button,
+  Table,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
+  TableContainer,
 } from "@chakra-ui/react";
 import { useFetcher } from "@remix-run/react";
 import { SerializeFrom } from "@remix-run/node";
@@ -38,18 +44,12 @@ import {
   useState,
 } from "react";
 import { route } from "routes-gen";
-import {
-  BiCheck,
-  BiCloudDownload,
-  BiData,
-  BiCalendarAlt,
-} from "react-icons/bi";
+import { BiCloudDownload } from "react-icons/bi";
 import { BsArrowUp } from "react-icons/bs";
-import { CgDanger } from "react-icons/cg";
 import { FocusLock } from "@chakra-ui/focus-lock";
 import { useBookmarkProvider } from "~/components/BookmarkProvider";
 import { Alert } from "~/components/Alert";
-import { TaskStatus } from "@prisma/client";
+import { color, icon } from "~/libs/status/utils";
 
 export const DownloadButton = ({
   code,
@@ -75,7 +75,7 @@ export const DownloadButton = ({
           />
         </Box>
       </PopoverTrigger>
-      <PopoverContent p={2}>
+      <PopoverContent p={2} w="100vw">
         <FocusLock persistentFocus={false}>
           <PopoverArrow />
           <Tabs>
@@ -86,7 +86,7 @@ export const DownloadButton = ({
             </TabList>
 
             <TabPanels>
-              <TabPanel>
+              <TabPanel px={0}>
                 <LinksPanel code={code} />
               </TabPanel>
               <TabPanel>
@@ -110,48 +110,63 @@ const LinksPanel = ({ code }: { code: string }) => {
     fetcher.load(route("/api/torrent/:code", { code }));
   }, [fetcher.load, code]);
 
+  if (fetcher.state === "loading")
+    return (
+      <Center>
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="teal.300"
+          size="xl"
+        />
+      </Center>
+    );
+
+  if (fetcher.data && fetcher.data.items.length < 1)
+    return <Text>No data</Text>;
+
   return (
-    <>
-      {fetcher.state === "loading" && (
-        <Center>
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="teal.300"
-            size="xl"
-          />
-        </Center>
-      )}
-      {fetcher.data?.items.map((item, i) => (
-        <DownloadConfirm key={item.link + i} item={item}>
-          <Stat my={4}>
-            <StatLabel noOfLines={2}>
-              {bookmark?.downloadTasks?.filter(
-                ({ targetUrl }) => targetUrl === item.link
-              )?.[0]?.status === TaskStatus.Failed && (
-                <Icon as={CgDanger} color="red.300" />
-              )}
-              {item.title}
-            </StatLabel>
-            <StatHelpText>
-              <Icon as={BiCalendarAlt} />
-              {item.registeredAt.slice(0, 10)}
-              <br />
-              <Icon as={BiData} />
-              {item.size}
-              <StatArrow type="increase" ml={2} />
-              {item.seeder}
-              <StatArrow type="decrease" ml={2} />
-              {item.leech}
-              <Icon as={BiCheck} ml={2} />
-              {item.completed}
-            </StatHelpText>
-          </Stat>
-        </DownloadConfirm>
-      ))}
-      {fetcher.data && fetcher.data.items.length < 1 && <Text>No data</Text>}
-    </>
+    <TableContainer>
+      <Table size="sm">
+        <Thead>
+          <Tr>
+            <Th></Th>
+            <Th>Size</Th>
+            <Th>Seeder</Th>
+            <Th>Leech</Th>
+            <Th>Completed</Th>
+            <Th>Date</Th>
+            <Th>Title</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {fetcher.data?.items.map((item, i) => {
+            const task = bookmark?.downloadTasks?.find(
+              ({ targetUrl }) => targetUrl === item.link
+            );
+
+            return (
+              <DownloadConfirm key={item.link + i} item={item}>
+                <Tr>
+                  <Td>
+                    {task && (
+                      <Icon as={icon(task.status)} color={color(task.status)} />
+                    )}
+                  </Td>
+                  <Td>{item.size}</Td>
+                  <Td>{item.seeder}</Td>
+                  <Td>{item.leech}</Td>
+                  <Td>{item.completed}</Td>
+                  <Td>{item.registeredAt.slice(0, 10)}</Td>
+                  <Td>{item.title}</Td>
+                </Tr>
+              </DownloadConfirm>
+            );
+          })}
+        </Tbody>
+      </Table>
+    </TableContainer>
   );
 };
 

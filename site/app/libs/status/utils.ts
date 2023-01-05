@@ -3,6 +3,7 @@ import {
   BiErrorCircle,
   BiPauseCircle,
   BiPlayCircle,
+  BiStopCircle,
 } from "react-icons/bi";
 
 export const color = (status: string, index = 300) =>
@@ -12,6 +13,8 @@ export const color = (status: string, index = 300) =>
     ? `orange.${index}`
     : status === "Completed"
     ? `teal.${index}`
+    : status === "Canceled"
+    ? `yellow.${index}`
     : `red.${index}`;
 
 export const icon = (status: string) =>
@@ -21,4 +24,6 @@ export const icon = (status: string) =>
     ? BiPlayCircle
     : status === "Completed"
     ? BiCheckCircle
+    : status === "Canceled"
+    ? BiStopCircle
     : BiErrorCircle;
