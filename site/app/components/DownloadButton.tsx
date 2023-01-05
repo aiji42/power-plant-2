@@ -148,7 +148,7 @@ const LinksPanel = ({ code }: { code: string }) => {
 
             return (
               <DownloadConfirm key={item.link + i} item={item}>
-                <Tr>
+                <Tr _hover={{ bg: "gray.600" }}>
                   <Td>
                     {task && (
                       <Icon as={icon(task.status)} color={color(task.status)} />
