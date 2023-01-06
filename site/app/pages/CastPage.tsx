@@ -10,16 +10,11 @@ import {
   Link as ChakraLink,
   Flex,
   Icon,
-  GridItem,
-  Text,
   Grid,
 } from "@chakra-ui/react";
 import { BsFillPersonLinesFill } from "react-icons/bs";
-import { route } from "routes-gen";
-import { FaCircle } from "react-icons/fa";
-import { color } from "~/libs/status/utils";
-import { Link } from "@remix-run/react";
 import { Toolbar } from "~/components/Toolbar";
+import { ProductCard } from "~/components/ProductCard";
 
 export const CastPage = () => {
   const data = useLoaderData<typeof loader>();
@@ -51,31 +46,9 @@ export const CastPage = () => {
         </Center>
       </Flex>
       <Grid templateColumns="repeat(3, 1fr)" gap={2} mt={8}>
-        {data.items.map(
-          ({ image_path: src, name, sku: code, casts, status }) => (
-            <Link key={code} to={route("/product/:code", { code })}>
-              <GridItem w="100%" minH={48} position="relative">
-                <Image src={src} alt={name} w="full" loading="lazy" />
-                <Text fontSize="2xs" noOfLines={2}>
-                  {name}
-                </Text>
-                <Text fontSize="3xs" noOfLines={1} color="teal.200">
-                  {casts.join("/")}
-                </Text>
-                {status && (
-                  <Icon
-                    as={FaCircle}
-                    color={color(status)}
-                    top={-2}
-                    left={-2}
-                    position="absolute"
-                    fontSize="md"
-                  />
-                )}
-              </GridItem>
-            </Link>
-          )
-        )}
+        {data.items.map((item) => (
+          <ProductCard key={item.sku} {...item} />
+        ))}
       </Grid>
     </Box>
   );

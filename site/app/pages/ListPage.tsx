@@ -1,26 +1,13 @@
-import { Link, useLoaderData, useLocation } from "@remix-run/react";
-import {
-  Grid,
-  GridItem,
-  Box,
-  Slide,
-  CircularProgress,
-  Center,
-  Text,
-  Icon,
-  Image,
-  Tag,
-} from "@chakra-ui/react";
-import { FaCircle } from "react-icons/fa";
+import { useLoaderData, useLocation } from "@remix-run/react";
+import { Grid, Box, Slide, CircularProgress, Center } from "@chakra-ui/react";
 import { route } from "routes-gen";
 import { useSwipeToNext } from "~/hooks/useSwipeToNext";
 import { loader } from "~/routes/__authed/stock.$page";
-import { color } from "~/libs/status/utils";
 import { ReactNode, useEffect } from "react";
 import { useDataRefresh } from "remix-utils";
 import { SwipeBesideNavi } from "~/components/SwipeBesideNavi";
 import { Toolbar } from "~/components/Toolbar";
-import humanFormat from "human-format";
+import { ProductCard } from "~/components/ProductCard";
 
 export function ListPage() {
   const data = useLoaderData<typeof loader>();
@@ -32,52 +19,9 @@ export function ListPage() {
         <Box p={2}>
           <Toolbar />
           <Grid templateColumns="repeat(3, 1fr)" gap={2}>
-            {data.items.map(
-              ({
-                image_path: src,
-                name,
-                sku: code,
-                casts,
-                status,
-                mediaSize,
-              }) => (
-                <Link key={code} to={route("/product/:code", { code })}>
-                  <GridItem w="100%" minH={48} position="relative">
-                    <Box position="relative">
-                      <Image src={src} alt={name} w="full" loading="lazy" />
-                      {mediaSize && (
-                        <Tag
-                          size="sm"
-                          variant="solid"
-                          bottom={0}
-                          right={0}
-                          position="absolute"
-                          bg="teal.500"
-                        >
-                          {humanFormat(Number(mediaSize), { unit: "B" })}
-                        </Tag>
-                      )}
-                    </Box>
-                    <Text fontSize="2xs" noOfLines={2}>
-                      {name}
-                    </Text>
-                    <Text fontSize="3xs" noOfLines={1} color="teal.200">
-                      {casts.join("/")}
-                    </Text>
-                    {status === "Running" && (
-                      <Icon
-                        as={FaCircle}
-                        color={color(status)}
-                        top={-2}
-                        left={-2}
-                        position="absolute"
-                        fontSize="md"
-                      />
-                    )}
-                  </GridItem>
-                </Link>
-              )
-            )}
+            {data.items.map((item) => (
+              <ProductCard key={item.sku} {...item} />
+            ))}
           </Grid>
         </Box>
       </SwipeNext>
@@ -90,8 +34,8 @@ const useRefreshForTaskStatus = () => {
   const { refresh } = useDataRefresh();
   useEffect(() => {
     if (
-      data.items.some(({ status }) =>
-        ["Waiting", "Running"].includes(status ?? "")
+      data.items.some(({ downloadStatus }) =>
+        ["Waiting", "Running"].includes(downloadStatus ?? "")
       )
     ) {
       const interval = setInterval(refresh, 10000);

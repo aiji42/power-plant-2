@@ -38,6 +38,11 @@ export const productsFromDB = async (
         orderBy: { createdAt: "desc" },
         select: { status: true },
       },
+      compressTasks: {
+        take: 1,
+        orderBy: { createdAt: "desc" },
+        select: { status: true },
+      },
       medias: {
         take: 1,
         orderBy: { createdAt: "desc" },
@@ -51,7 +56,8 @@ export const productsFromDB = async (
     name: p.title,
     image_path: p.imageUrls.slice(-1)[0] ?? "",
     casts: p.casts.map(({ name }) => name),
-    status: p.downloadTasks[0]?.status,
+    downloadStatus: p.downloadTasks[0]?.status,
+    compressStatus: p.compressTasks[0]?.status,
     mediaSize: p.medias[0]?.size,
   }));
 };

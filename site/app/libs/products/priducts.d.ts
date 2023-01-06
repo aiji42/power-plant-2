@@ -5,6 +5,7 @@ export type ProductList = {
   image_path: string;
   name: string;
   casts: string[];
-  status?: TaskStatus;
+  downloadStatus?: TaskStatus;
+  compressStatus?: TaskStatus;
   mediaSize?: string;
 }[];
