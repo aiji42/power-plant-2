@@ -6,4 +6,5 @@ export type ProductList = {
   name: string;
   casts: string[];
   status?: TaskStatus;
+  mediaSize?: string;
 }[];

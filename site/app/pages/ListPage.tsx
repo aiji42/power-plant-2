@@ -9,6 +9,7 @@ import {
   Text,
   Icon,
   Image,
+  Tag,
 } from "@chakra-ui/react";
 import { FaCircle } from "react-icons/fa";
 import { route } from "routes-gen";
@@ -19,6 +20,7 @@ import { ReactNode, useEffect } from "react";
 import { useDataRefresh } from "remix-utils";
 import { SwipeBesideNavi } from "~/components/SwipeBesideNavi";
 import { Toolbar } from "~/components/Toolbar";
+import humanFormat from "human-format";
 
 export function ListPage() {
   const data = useLoaderData<typeof loader>();
@@ -31,17 +33,38 @@ export function ListPage() {
           <Toolbar />
           <Grid templateColumns="repeat(3, 1fr)" gap={2}>
             {data.items.map(
-              ({ image_path: src, name, sku: code, casts, status }) => (
+              ({
+                image_path: src,
+                name,
+                sku: code,
+                casts,
+                status,
+                mediaSize,
+              }) => (
                 <Link key={code} to={route("/product/:code", { code })}>
                   <GridItem w="100%" minH={48} position="relative">
-                    <Image src={src} alt={name} w="full" loading="lazy" />
+                    <Box position="relative">
+                      <Image src={src} alt={name} w="full" loading="lazy" />
+                      {mediaSize && (
+                        <Tag
+                          size="sm"
+                          variant="solid"
+                          bottom={0}
+                          right={0}
+                          position="absolute"
+                          bg="teal.500"
+                        >
+                          {humanFormat(Number(mediaSize), { unit: "B" })}
+                        </Tag>
+                      )}
+                    </Box>
                     <Text fontSize="2xs" noOfLines={2}>
                       {name}
                     </Text>
                     <Text fontSize="3xs" noOfLines={1} color="teal.200">
                       {casts.join("/")}
                     </Text>
-                    {status && (
+                    {status === "Running" && (
                       <Icon
                         as={FaCircle}
                         color={color(status)}

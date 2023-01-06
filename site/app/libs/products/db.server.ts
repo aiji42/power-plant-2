@@ -38,6 +38,11 @@ export const productsFromDB = async (
         orderBy: { createdAt: "desc" },
         select: { status: true },
       },
+      medias: {
+        take: 1,
+        orderBy: { createdAt: "desc" },
+        select: { size: true },
+      },
     },
   });
 
@@ -47,5 +52,6 @@ export const productsFromDB = async (
     image_path: p.imageUrls.slice(-1)[0] ?? "",
     casts: p.casts.map(({ name }) => name),
     status: p.downloadTasks[0]?.status,
+    mediaSize: p.medias[0]?.size,
   }));
 };
