@@ -1,4 +1,4 @@
-import { $, fs, path, log, LogEntry } from "zx";
+import { $, fs, log, LogEntry } from "zx";
 import ffprobe from "ffprobe";
 import { PrismaClient, TaskStatus, DownloadTask } from "@prisma/client";
 
@@ -166,21 +166,11 @@ const download = async (
   );
 };
 
-const convertToHLS = async (file: string, prefix: string): Promise<string> => {
-  await $`mkdir ${prefix}`;
+const upload = async (filename: string, prefix: string): Promise<string> => {
+  const key = `${prefix}/${filename}`;
+  await $`aws s3 cp --endpoint-url https://${process.env.R2_CLIENT_ID}.r2.cloudflarestorage.com ${filename} s3://${BUCKET}/${key}`;
 
-  const movedFile = `${prefix}/video${path.extname(file)}}`;
-  await $`mv ${file} ${movedFile}`;
-
-  await $`ffmpeg -i ${movedFile} -c:v copy -c:a copy -f hls -hls_time 6 -hls_playlist_type vod -hls_segment_filename "${prefix}/video%4d.ts" ${prefix}/video.m3u8`;
-
-  await $`rm -f ${movedFile}`;
-
-  return `${prefix}/video.m3u8`;
-};
-
-const uploadToStorage = async (prefix: string) => {
-  await $`aws s3 sync --endpoint-url https://${process.env.R2_CLIENT_ID}.r2.cloudflarestorage.com ${prefix} s3://${BUCKET}/${prefix}`;
+  return key;
 };
 
 const saveDbAsMedia = async (
@@ -224,11 +214,12 @@ const main = async () => {
       monitoringCancel(task.id),
     ]);
 
-    for (let orgFile of fileNames) {
-      const { size, ...meta } = await scanMetaInfo(orgFile);
-      const dir = `${task.product.code}-${createRandomString(16)}`;
-      const key = await convertToHLS(orgFile, dir);
-      await uploadToStorage(dir);
+    for (let fileName of fileNames) {
+      const { size, ...meta } = await scanMetaInfo(fileName);
+      const key = await upload(
+        fileName,
+        `${task.product.code}-${createRandomString(16)}`
+      );
       await saveDbAsMedia(
         `${process.env.R2_PUBLIC_URL}/${key}`,
         key,

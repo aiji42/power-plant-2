@@ -1,4 +1,4 @@
-import { $, fs, path } from "zx";
+import { $, fs } from "zx";
 import ffprobe from "ffprobe";
 import {
   PrismaClient,
@@ -10,7 +10,6 @@ import {
 
 const prisma = new PrismaClient({ log: ["info", "warn", "error"] });
 
-const DOWNLOAD_DIR = "/downloads";
 const BUCKET = "power-plant-2";
 
 const scanMetaInfo = async (path: string) => {
@@ -78,39 +77,26 @@ const failed = (job: Pick<CompressTask, "id">, e: Error) => {
   });
 };
 
-const download = async (url: string, dir: string): Promise<string> => {
-  $`mkdir -p ${dir}`;
-  const outName = `${dir}/video.mp4`;
-  await $`ffmpeg -i ${url} -bsf:a aac_adtstoasc -c copy ${outName}`;
+const download = async (url: string): Promise<string> => {
+  const out = "_video.mp4";
+  await $`ffmpeg -i ${url} -bsf:a aac_adtstoasc -c copy ${out}`;
 
-  return outName;
+  return out;
 };
 
 const compress = async (file: string) => {
-  const outFile = `${path.dirname(file)}/${path.basename(
-    file,
-    path.extname(file)
-  )}-compressed.mp4`;
-  await $`ffmpeg -y -i ${file} -s 856:480 -b:v 1.2m -r 30 -vcodec libx264 ${outFile}`;
+  const out = "video.mp4";
+  // compress to 360p
+  await $`ffmpeg -i ${file} -vf scale=-1:360 -r 24 -movflags +faststart -c:v libx264 -profile:v high -level:v 4.0 -b_strategy 2 -bf 2 -flags cgop -coder ac -pix_fmt yuv420p -crf 23 -maxrate 1M -bufsize 2M -c:a aac -ac 2 -ar 48000 -b:a 384k ${out}`;
 
-  return outFile;
+  return out;
 };
 
-const convertToHLS = async (file: string, prefix: string): Promise<string> => {
-  await $`mkdir ${prefix}`;
+const upload = async (filename: string, prefix: string): Promise<string> => {
+  const key = `${prefix}/${filename}`;
+  await $`aws s3 cp --endpoint-url https://${process.env.R2_CLIENT_ID}.r2.cloudflarestorage.com ${filename} s3://${BUCKET}/${key}`;
 
-  const movedFile = `${prefix}/video${path.extname(file)}}`;
-  await $`mv ${file} ${movedFile}`;
-
-  await $`ffmpeg -y -i ${movedFile} -c:v copy -c:a copy -f hls -hls_time 6 -hls_playlist_type vod -hls_segment_filename "${prefix}/video%4d.ts" ${prefix}/video.m3u8`;
-
-  await $`rm -f ${movedFile}`;
-
-  return `${prefix}/video.m3u8`;
-};
-
-const uploadToStorage = async (prefix: string) => {
-  await $`aws s3 sync --endpoint-url https://${process.env.R2_CLIENT_ID}.r2.cloudflarestorage.com ${prefix} s3://${BUCKET}/${prefix}`;
+  return key;
 };
 
 const saveDbAsMedia = async (
@@ -148,12 +134,12 @@ const main = async () => {
   if (!task) return;
 
   try {
-    const fileName = await download(task.media.url, DOWNLOAD_DIR);
-    const compressedFileName = await compress(fileName);
-    const { size, ...meta } = await scanMetaInfo(compressedFileName);
-    const dir = `${task.product.code}-${createRandomString(16)}`;
-    const key = await convertToHLS(compressedFileName, dir);
-    await uploadToStorage(dir);
+    const fileName = await compress(await download(task.media.url));
+    const { size, ...meta } = await scanMetaInfo(fileName);
+    const key = await upload(
+      fileName,
+      `${task.product.code}-${createRandomString(16)}`
+    );
     await saveDbAsMedia(
       `${process.env.R2_PUBLIC_URL}/${key}`,
       key,
