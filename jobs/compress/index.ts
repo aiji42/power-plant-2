@@ -79,15 +79,18 @@ const failed = (job: Pick<CompressTask, "id">, e: Error) => {
 
 const download = async (url: string): Promise<string> => {
   const out = "_video.mp4";
-  await $`ffmpeg -i ${url} -bsf:a aac_adtstoasc -c copy ${out}`;
-
+  if (url.endsWith("m3u8")) {
+    await $`ffmpeg -i ${url} -bsf:a aac_adtstoasc -c copy ${out}`;
+  } else {
+    await $`time aria2c --show-console-readout=false --summary-interval=60 -x16 -o ${out} ${url} `;
+  }
   return out;
 };
 
 const compress = async (file: string) => {
   const out = "video.mp4";
   // compress to 360p
-  await $`ffmpeg -i ${file} -vf scale=-1:360 -r 24 -movflags +faststart -c:v libx264 -profile:v high -level:v 4.0 -b_strategy 2 -bf 2 -flags cgop -coder ac -pix_fmt yuv420p -crf 23 -maxrate 1M -bufsize 2M -c:a aac -ac 2 -ar 48000 -b:a 384k ${out}`;
+  await $`ffmpeg -i ${file} -vf scale=-2:360 -r 24 -movflags +faststart -c:v libx264 -profile:v high -level:v 4.0 -b_strategy 2 -bf 2 -flags cgop -coder ac -pix_fmt yuv420p -crf 23 -maxrate 1M -bufsize 2M -c:a aac -ac 2 -ar 48000 -b:a 384k ${out}`;
 
   return out;
 };
