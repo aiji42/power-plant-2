@@ -34,8 +34,9 @@ export const Chart = ({
         datasets: [
           {
             data: samples,
-            borderColor: "rgb(53, 162, 235)",
-            backgroundColor: "rgba(53, 162, 235, 0.5)",
+            borderColor: "rgb(130, 231, 217, 1)",
+            pointRadius: 0,
+            cubicInterpolationMode: "monotone",
           },
         ],
       }}
