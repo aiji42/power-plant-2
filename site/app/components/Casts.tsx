@@ -1,5 +1,4 @@
 import { Link, useFetcher } from "@remix-run/react";
-import { SerializeFrom } from "@remix-run/node";
 import { loader as castsLoader } from "~/routes/__authed/api/casts.$code";
 import { useEffect } from "react";
 import { route } from "routes-gen";
@@ -8,34 +7,51 @@ import { BiCheck, BiPlus } from "react-icons/bi";
 import { useBookmarkProvider } from "~/components/BookmarkProvider";
 
 export const Casts = ({ code }: { code: string }) => {
-  const castFetcher = useFetcher<SerializeFrom<typeof castsLoader>>();
+  const castFetcher = useFetcher<typeof castsLoader>();
   useEffect(() => {
     castFetcher.load(route("/api/casts/:code", { code }));
   }, [castFetcher.load, code]);
+  const { bookmark } = useBookmarkProvider();
+
+  let casts =
+    bookmark?.casts?.map(({ name, _count: { products: count } }) => ({
+      name,
+      count,
+      connected: true,
+    })) ?? [];
+  casts = (castFetcher.data?.casts ?? []).reduce(
+    (res, { name, productCount: count }) => {
+      if (res.some((item) => item.name === name)) return res;
+      return [...res, { name, count, connected: false }];
+    },
+    casts
+  );
 
   return (
     <>
-      {castFetcher.type !== "done" && (
-        <Skeleton borderRadius="full" height={8} />
-      )}
-      {castFetcher.type === "done" && castFetcher.data && (
+      {casts.length > 0 ? (
         <Box lineHeight={2.25}>
-          {castFetcher.data.casts.map((cast) => (
-            <CastButton key={cast.name} cast={cast} />
+          {casts.map((cast) => (
+            <CastButton key={cast.name} {...cast} />
           ))}
         </Box>
-      )}
+      ) : castFetcher.type !== "done" ? (
+        <Skeleton borderRadius="full" height={8} />
+      ) : null}
     </>
   );
 };
 
 const CastButton = ({
-  cast,
+  name,
+  count,
+  connected,
 }: {
-  cast: SerializeFrom<typeof castsLoader>["casts"][number];
+  name: string;
+  count?: number;
+  connected: boolean;
 }) => {
   const { bookmark, handlers, optimist } = useBookmarkProvider();
-  const connectedCast = bookmark?.casts.find(({ name }) => name === cast.name);
 
   return (
     <Tag
@@ -43,27 +59,25 @@ const CastButton = ({
       colorScheme="teal"
       borderRadius="full"
       mr={2}
-      variant={connectedCast ? "subtle" : "outline"}
+      variant={connected ? "subtle" : "outline"}
     >
       <TagLabel>
-        <Link to={route("/cast/:cast", { cast: cast.name })}>
-          {cast.name}
-          {connectedCast
-            ? `(${connectedCast._count.products})`
-            : cast.productCount
-            ? `(${cast.productCount})`
-            : null}
+        <Link to={route("/cast/:cast", { cast: name })}>
+          {name}
+          {count ? `(${count})` : null}
         </Link>
       </TagLabel>
-      <TagRightIcon
-        as={connectedCast ? BiCheck : BiPlus}
-        onClick={() => {
-          if (!optimist)
-            connectedCast
-              ? handlers.disconnectCast(cast.name)
-              : handlers.connectCast(cast.name);
-        }}
-      />
+      {bookmark && (
+        <TagRightIcon
+          as={connected ? BiCheck : BiPlus}
+          onClick={() => {
+            if (!optimist)
+              connected
+                ? handlers.disconnectCast(name)
+                : handlers.connectCast(name);
+          }}
+        />
+      )}
     </Tag>
   );
 };

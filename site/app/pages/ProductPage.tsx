@@ -12,6 +12,7 @@ import {
   Spacer,
   Link,
   IconButton,
+  Tag,
 } from "@chakra-ui/react";
 import { loader } from "~/routes/__authed/product.$code";
 import { BookmarkButton } from "~/components/BookmarkButton";
@@ -32,6 +33,8 @@ import { TaskButton } from "~/components/TasksButton";
 import { route } from "routes-gen";
 import { Toolbar } from "~/components/Toolbar";
 import { PlayButton } from "~/components/PlayButton";
+import { color } from "~/libs/status/utils";
+import humanFormat from "human-format";
 
 export const ProductPage = () => {
   const data = useLoaderData<typeof loader>();
@@ -45,29 +48,7 @@ export const ProductPage = () => {
     <BookmarkProvider code={data.product.code}>
       <Box w="full" p={2}>
         <Toolbar />
-        <Box position="relative">
-          <Image
-            rounded={"md"}
-            src={data.product.imageUrls[0]}
-            fit={"cover"}
-            align={"center"}
-            w={"100%"}
-            h="320px"
-            objectPosition={"right top"}
-          />
-          <Box
-            position="absolute"
-            h={16}
-            w={16}
-            top={0}
-            bottom={0}
-            left={0}
-            right={0}
-            margin="auto"
-          >
-            <LargePlayButton />
-          </Box>
-        </Box>
+        <HeroImage />
         <Stack my={6} px={4} spacing={3}>
           <Flex>
             <Link
@@ -186,21 +167,58 @@ const ShuffleLink = () => {
   );
 };
 
-const LargePlayButton = () => {
+const HeroImage = () => {
   const data = useLoaderData<typeof loader>();
   const { bookmark } = useBookmarkProvider();
 
   return (
-    <PlayButton
-      w="100%"
-      h="100%"
-      fontSize={88}
-      shadow="md"
-      rounded="full"
-      color="telegram.200"
-      backdropFilter="auto"
-      backdropBlur="4px"
-      src={bookmark?.medias?.[0]?.url ?? data.product.sample}
-    />
+    <Box position="relative">
+      <Image
+        rounded={"md"}
+        src={data.product.imageUrls[0]}
+        fit={"cover"}
+        align={"center"}
+        w={"100%"}
+        h="320px"
+        objectPosition={"right top"}
+      />
+      <Box
+        position="absolute"
+        h={16}
+        w={16}
+        top={0}
+        bottom={0}
+        left={0}
+        right={0}
+        margin="auto"
+      >
+        <PlayButton
+          w="100%"
+          h="100%"
+          fontSize={88}
+          shadow="md"
+          rounded="full"
+          color="telegram.200"
+          backdropFilter="auto"
+          backdropBlur="4px"
+          src={bookmark?.medias?.[0]?.url ?? data.product.sample}
+        />
+      </Box>
+      {bookmark?.medias?.[0]?.size && (
+        <Tag
+          variant="solid"
+          bottom={0}
+          right={0}
+          position="absolute"
+          bg={
+            bookmark.compressTasks?.[0]?.status
+              ? color(bookmark.compressTasks[0].status, 500)
+              : "gray.500"
+          }
+        >
+          {humanFormat(Number(bookmark.medias[0].size), { unit: "B" })}
+        </Tag>
+      )}
+    </Box>
   );
 };

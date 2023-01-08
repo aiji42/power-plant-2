@@ -7,8 +7,6 @@ import {
   PopoverContent,
   PopoverTrigger,
   useDisclosure,
-  AvatarBadge,
-  Avatar,
   Flex,
   Text,
   IconButton,
@@ -48,16 +46,13 @@ export const MediaButton = ({
     >
       <PopoverTrigger>
         <Box {...props}>
-          <Avatar
-            size="sm"
-            as={IconButton}
-            icon={<Icon as={BiPlayCircle} fontSize="3xl" color="white" />}
+          <IconButton
+            rounded="3xl"
+            aria-label="Download media"
+            icon={<Icon as={BiPlayCircle} fontSize="3xl" />}
+            boxSize={8}
             backgroundColor="transparent"
-          >
-            {Number(bookmark?.medias.length) > 0 && (
-              <AvatarBadge boxSize="1em" bg="teal.300" />
-            )}
-          </Avatar>
+          />
         </Box>
       </PopoverTrigger>
       <PopoverContent p={2}>

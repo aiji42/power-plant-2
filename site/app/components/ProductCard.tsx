@@ -43,9 +43,6 @@ export const ProductCard = ({
             </Tag>
           )}
         </Box>
-        <Text fontSize="2xs" noOfLines={2}>
-          {name}
-        </Text>
         <Text fontSize="3xs" noOfLines={1} color="teal.200">
           {casts.join("/")}
         </Text>

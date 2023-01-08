@@ -16,9 +16,9 @@ export function ListPage() {
   return (
     <SwipeBeside>
       <SwipeNext nextTo={data.nextTo}>
-        <Box p={2}>
+        <Box py={2} px={1}>
           <Toolbar />
-          <Grid templateColumns="repeat(3, 1fr)" gap={2}>
+          <Grid templateColumns="repeat(3, 1fr)" gap={1}>
             {data.items.map((item) => (
               <ProductCard key={item.sku} {...item} />
             ))}

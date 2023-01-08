@@ -83,8 +83,14 @@ export const action = async ({ params, request }: DataFunctionArgs) => {
     }
   }
 
+  const [bookmark, randomCode] = await Promise.all([
+    getProductData(code),
+    getCodeByRandom(),
+  ]);
+
   return json({
-    bookmark: await getProductData(code),
+    bookmark,
+    randomCode,
     signedUploadUrl,
   });
 };

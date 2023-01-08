@@ -54,7 +54,7 @@ export const BookmarkProvider = ({
   code: string;
   children: ReactNode;
 }) => {
-  const fetcher = useFetcher<SerializeFrom<typeof bookmarkLoader>>();
+  const fetcher = useFetcher<typeof bookmarkLoader>();
   const action = route("/api/bookmark/:code", { code });
   const refreshBookmark = useCallback(() => {
     fetcher.load(action);
