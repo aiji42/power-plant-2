@@ -16,40 +16,38 @@ export const ProductCard = ({
   mediaSize,
 }: ProductList[number]) => {
   return (
-    <Link key={code} to={route("/product/:code", { code })}>
-      <GridItem w="100%" minH={48} position="relative" mb={2}>
-        <Box position="relative">
-          <Image src={src} alt={name} w="full" loading="lazy" />
-          {downloadStatus && !mediaSize && (
-            <Icon
-              as={FaCircle}
-              color={color(downloadStatus)}
-              top={-2}
-              left={-2}
-              position="absolute"
-              fontSize="md"
-            />
-          )}
-          {mediaSize && (
-            <Tag
-              size="sm"
-              variant="solid"
-              bottom={0}
-              right={0}
-              position="absolute"
-              bg={compressStatus ? color(compressStatus, 500) : "gray.500"}
-            >
-              {humanFormat(Number(mediaSize), { unit: "B" })}
-            </Tag>
-          )}
-        </Box>
-        <Text fontSize="3xs" noOfLines={1}>
-          {name}
-        </Text>
-        <Text fontSize="3xs" noOfLines={1} color="teal.200">
-          {casts.join("/")}
-        </Text>
-      </GridItem>
+    <Link to={route("/product/:code", { code })}>
+      <Box position="relative">
+        <Image src={src} alt={name} w="full" loading="lazy" />
+        {downloadStatus && !mediaSize && (
+          <Icon
+            as={FaCircle}
+            color={color(downloadStatus)}
+            top={-2}
+            left={-2}
+            position="absolute"
+            fontSize="md"
+          />
+        )}
+        {mediaSize && (
+          <Tag
+            size="sm"
+            variant="solid"
+            bottom={0}
+            right={0}
+            position="absolute"
+            bg={compressStatus ? color(compressStatus, 500) : "gray.500"}
+          >
+            {humanFormat(Number(mediaSize), { unit: "B" })}
+          </Tag>
+        )}
+      </Box>
+      <Text fontSize="3xs" noOfLines={1}>
+        {name}
+      </Text>
+      <Text fontSize="3xs" noOfLines={1} color="teal.200">
+        {casts.join("/")}
+      </Text>
     </Link>
   );
 };

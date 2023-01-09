@@ -1,5 +1,12 @@
 import { useLoaderData, useLocation } from "@remix-run/react";
-import { Grid, Box, Slide, CircularProgress, Center } from "@chakra-ui/react";
+import {
+  Grid,
+  GridItem,
+  Box,
+  Slide,
+  CircularProgress,
+  Center,
+} from "@chakra-ui/react";
 import { route } from "routes-gen";
 import { useSwipeToNext } from "~/hooks/useSwipeToNext";
 import { loader } from "~/routes/__authed/stock.$page";
@@ -20,7 +27,15 @@ export function ListPage() {
           <Toolbar />
           <Grid templateColumns="repeat(3, 1fr)" gap={1}>
             {data.items.map((item) => (
-              <ProductCard key={item.sku} {...item} />
+              <GridItem
+                key={item.sku}
+                w="100%"
+                minH={48}
+                position="relative"
+                mb={2}
+              >
+                <ProductCard {...item} />
+              </GridItem>
             ))}
           </Grid>
         </Box>

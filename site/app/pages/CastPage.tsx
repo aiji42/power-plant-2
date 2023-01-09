@@ -11,6 +11,7 @@ import {
   Flex,
   Icon,
   Grid,
+  GridItem,
 } from "@chakra-ui/react";
 import { BsFillPersonLinesFill } from "react-icons/bs";
 import { Toolbar } from "~/components/Toolbar";
@@ -47,7 +48,15 @@ export const CastPage = () => {
       </Flex>
       <Grid templateColumns="repeat(3, 1fr)" gap={2} mt={8}>
         {data.items.map((item) => (
-          <ProductCard key={item.sku} {...item} />
+          <GridItem
+            key={item.sku}
+            w="100%"
+            minH={48}
+            position="relative"
+            mb={2}
+          >
+            <ProductCard {...item} />
+          </GridItem>
         ))}
       </Grid>
     </Box>
