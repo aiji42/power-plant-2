@@ -17,7 +17,7 @@ export const ProductCard = ({
 }: ProductList[number]) => {
   return (
     <Link key={code} to={route("/product/:code", { code })}>
-      <GridItem w="100%" minH={48} position="relative">
+      <GridItem w="100%" minH={48} position="relative" mb={2}>
         <Box position="relative">
           <Image src={src} alt={name} w="full" loading="lazy" />
           {downloadStatus && !mediaSize && (
@@ -43,6 +43,9 @@ export const ProductCard = ({
             </Tag>
           )}
         </Box>
+        <Text fontSize="3xs" noOfLines={1}>
+          {name}
+        </Text>
         <Text fontSize="3xs" noOfLines={1} color="teal.200">
           {casts.join("/")}
         </Text>
