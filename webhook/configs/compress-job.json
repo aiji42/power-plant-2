@@ -13,7 +13,7 @@
         "runnables": [
           {
             "container": {
-              "imageUri": "gcr.io/power-plant-2/power-plant-2/compress-job:latest",
+              "imageUri": "asia-northeast1-docker.pkg.dev/power-plant-2/power-plant-2/compress-job:latest",
               "entrypoint": ""
             }
           }

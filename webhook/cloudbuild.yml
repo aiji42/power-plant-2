@@ -1,7 +1,7 @@
 steps:
   - name: 'gcr.io/kaniko-project/executor:latest'
     args:
-      - --destination=gcr.io/$PROJECT_ID/power-plant-2/webhook:${COMMIT_SHA}
+      - --destination=asia-northeast1-docker.pkg.dev/$PROJECT_ID/power-plant-2/webhook:${COMMIT_SHA}
       - --cache=true
       - --context=dir:///workspace/webhook
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -12,7 +12,7 @@ steps:
       - update
       - $_SERVICE_NAME
       - '--platform=managed'
-      - '--image=gcr.io/$PROJECT_ID/power-plant-2/webhook:$COMMIT_SHA'
+      - '--image=asia-northeast1-docker.pkg.dev/$PROJECT_ID/power-plant-2/webhook:$COMMIT_SHA'
       - '--region=$_DEPLOY_REGION'
       - '--service-account=$_SERVICE_ACCOUNT'
       - '--set-env-vars=R2_ACCESS_KEY_ID=$_R2_ACCESS_KEY_ID,R2_SECRET_ACCESS_KEY=$_R2_SECRET_ACCESS_KEY,R2_CLIENT_ID=$_R2_CLIENT_ID'
