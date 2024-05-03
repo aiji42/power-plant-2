@@ -13,7 +13,7 @@ export const productsFromFANC = async (
     floor: "videoc",
     hits: SIZE,
     sort,
-    lte_date: new Date().toISOString().slice(0, 19),
+    lte_date: new Date(new Date().getTime() + 9 * 3600 * 1000).toISOString().slice(0, 19),
     keyword,
   });
   return (
